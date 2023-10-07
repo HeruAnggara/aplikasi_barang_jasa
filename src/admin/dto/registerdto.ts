@@ -1,0 +1,24 @@
+import { IsString, IsNotEmpty, IsEmail, MinLength, MaxLength, Matches } from "class-validator";
+
+export class RegisterDto {
+  
+  @IsNotEmpty()
+  @IsString()
+  nama: string;
+
+  @IsNotEmpty()
+  @IsEmail()
+  email: string;
+
+  @IsNotEmpty()
+  @IsString()
+  alamat: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @MinLength(6)
+  @MaxLength(20)
+  @Matches(/^(?=.*[A-Z])(?=.*[0-9])(?=.*\W).*$/)
+  password: string;
+
+}
