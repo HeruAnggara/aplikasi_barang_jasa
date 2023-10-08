@@ -246,4 +246,31 @@ export class PengadaanService {
             }    
         }
     } 
+
+    /**
+     * List Pengadaan Aktif
+     * 
+     * @returns 
+     */
+    async listPengadaanAktif() {
+        try {
+
+            const allPengadaan = await this.prisma.pengadaan.findMany({
+                where: {
+                    status: 1
+                }
+            });
+            
+            return {
+                statusCode: HttpStatus.OK,
+                message: "Data list pengadaan aktif",
+                data: allPengadaan
+            }
+        } catch (error) {
+            return {
+                statusCode: HttpStatus.BAD_REQUEST,
+                message: error.message
+            }
+        }
+    }
 }

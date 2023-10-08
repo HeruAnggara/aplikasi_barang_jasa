@@ -80,6 +80,12 @@ export class PengadaanController {
       @Param('idPengadaan', ParseIntPipe) idPengadaan: number,
       @Body() data: UpdatePengadaanDto
     ) {
-      return await this.pengadaanService.updateDataPengadaan(adminId, idPengadaan, data)
+      return await this.pengadaanService.updateDataPengadaan(adminId, idPengadaan, data);
+    }
+
+    @Get('/aktif')
+    @UseGuards(AuthGuard)
+    async listPengadaanAktif() {
+      return await this.pengadaanService.listPengadaanAktif();
     }
 }
