@@ -1,4 +1,4 @@
-import { HttpCode, HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpCode, HttpException, HttpStatus, Injectable, ParseIntPipe } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { PengajuannDto } from './dto/tambahPengajuan.dto';
 
@@ -14,7 +14,7 @@ export class PengajuanService {
      * @param file 
      * @returns 
      */
-    async tambahPengajuan(supplierId: number, data: PengajuannDto, proposal) {
+    async tambahPengajuan(supplierId: number, data: PengajuannDto) {
         try {
             const supplier = await this.prisma.supplier.findFirst({
                 where:{
@@ -26,11 +26,13 @@ export class PengajuanService {
                 throw new HttpException('Bad Request', HttpStatus.NOT_FOUND);
             }
 
+            const idPengadaan = parseInt(data.id_pengadaan); 
+
             await this.prisma.pengajuan.create({
                 data: {
-                    id_pengadaan: data.id_pengadaan,
+                    id_pengadaan: idPengadaan,
                     id_supplier: supplierId,
-                    proposal: proposal,
+                    proposal: data.proposal,
                     anggaran: data.anggaran
                 }
             })
@@ -40,6 +42,8 @@ export class PengajuanService {
                 message: "Data pengajuan berhasil ditambahkan"
             }
         } catch (error) {
+            console.log(error);
+            
             return {
                 statusCode: HttpStatus.BAD_REQUEST,
                 message: error.message
