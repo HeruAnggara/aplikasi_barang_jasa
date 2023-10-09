@@ -22,7 +22,8 @@ export class PengajuanController {
         }),
       )
     async tambahPengajuan(@Param('supplierId', ParseIntPipe) supplierId: number, @Body() data: PengajuannDto, @UploadedFile() file: Express.Multer.File) {
-        return await this.pengajuan.tambahPengajuan(supplierId, data, '/uploads/proposal/' + file.filename,)
+      data.proposal = '/uploads/proposal/' + file.filename;
+      return await this.pengajuan.tambahPengajuan(supplierId, data);
     }
 
 }
