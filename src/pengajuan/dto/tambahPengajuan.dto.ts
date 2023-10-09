@@ -4,7 +4,7 @@ export class PengajuannDto {
   
   @IsNotEmpty()
   @IsInt()
-  id_pengadaan: number;
+  id_pengadaan: string;
 
   @IsNotEmpty()
   @Matches('pdf')
