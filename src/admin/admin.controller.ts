@@ -15,11 +15,13 @@ export class AdminController {
         return await this.adminService.register(data);
     }
 
+    @UsePipes(ValidationPipe)
     @Post('login')
     async login(@Body() data: LoginDto) {
         return await this.adminService.login(data);
     }
 
+    @UsePipes(ValidationPipe)
     @Put(':adminId/edit')
     @UseGuards(AuthGuard)
     async editDataAdmin(@Param('adminId', ParseIntPipe) adminId: number, @Body() newData: EditDto) {        
