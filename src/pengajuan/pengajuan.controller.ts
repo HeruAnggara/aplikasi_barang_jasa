@@ -1,4 +1,4 @@
-import { Body, Controller, Param, ParseIntPipe, Post, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseIntPipe, Patch, Post, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { PengajuanService } from './pengajuan.service';
 import { AuthGuard } from 'src/admin/admin.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -8,6 +8,12 @@ import { PengajuannDto } from './dto/tambahPengajuan.dto';
 @Controller('pengajuan')
 export class PengajuanController {
     constructor(private pengajuan: PengajuanService){}
+
+    @Get(':supplierId/riwayat')
+    @UseGuards(AuthGuard)
+    async riwayatPengajuan(@Param('supplierId', ParseIntPipe)supplierId: number, ){
+      return await this.pengajuan.riwayatPengajuan(supplierId)
+    }
 
     @Post(':supplierId')
     @UseGuards(AuthGuard)
@@ -24,6 +30,18 @@ export class PengajuanController {
     async tambahPengajuan(@Param('supplierId', ParseIntPipe) supplierId: number, @Body() data: PengajuannDto, @UploadedFile() file: Express.Multer.File) {
       data.proposal = '/uploads/proposal/' + file.filename;
       return await this.pengajuan.tambahPengajuan(supplierId, data);
+    }
+
+    @Patch(':adminId/:idPengajuan/terima')
+    @UseGuards(AuthGuard)
+    async terimaPengajuan(@Param('adminId', ParseIntPipe)adminId: number, @Param('idPengajuan', ParseIntPipe)idPengajuan: number){
+      return await this.pengajuan.terimaPengajuan(adminId, idPengajuan)
+    }
+
+    @Patch(':adminId/:idPengajuan/tolak')
+    @UseGuards(AuthGuard)
+    async tolakPengajuan(@Param('adminId', ParseIntPipe)adminId: number, @Param('idPengajuan', ParseIntPipe)idPengajuan: number){
+      return await this.pengajuan.tolakPengajuan(adminId, idPengajuan)
     }
 
 }
