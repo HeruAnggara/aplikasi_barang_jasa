@@ -56,3 +56,12 @@ model pengajuan {
   created_at      DateTime  @default(now())
   updated_at      DateTime  @updatedAt() @db.Timestamp(6)
 }
+
+model laporan {
+  id            Int      @id @default(autoincrement())
+  id_pengajuan  Int
+  id_supplier   Int
+  laporan       String   @db.Text
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt()
+}
