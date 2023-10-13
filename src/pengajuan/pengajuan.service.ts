@@ -138,6 +138,49 @@ export class PengajuanService {
             }
         }
     }
+    
+    /**
+     * selesai pengajuan
+     * 
+     * @param adminId 
+     * @param idPengajuan 
+     * @returns 
+     */
+    async selesaiPengajuan(adminId: number, idPengajuan: number) {
+        try {
+            const checkUser = await this.prisma.admin.findUnique({
+                where: {
+                    id: adminId
+                }
+            });
+
+            if(!checkUser) {
+                throw new HttpException('Bad Request', HttpStatus.NOT_FOUND)
+            }
+
+            await this.prisma.pengajuan.update({
+                where: {
+                    id: idPengajuan
+                },
+                data: {
+                    status:{
+                        set: 3
+                    }
+                }
+            })
+            return {
+                statusCode: HttpStatus.OK,
+                message: 'Data pengajuan selesai'
+            }
+        } catch (error) {
+            console.log(error);
+            
+            return {
+                statusCode: HttpStatus.BAD_REQUEST,
+                message: error.message
+            }
+        }
+    }
 
     /**
      * riwayat pengajuan
@@ -211,6 +254,13 @@ export class PengajuanService {
         }
     }
 
+    /**
+     * tambah laporan
+     * 
+     * @param supplierId 
+     * @param data 
+     * @returns 
+     */
     async tambahLaporan(supplierId: number, data: LaporanDto) {
         try {
             const supplier = await this.prisma.supplier.findFirst({
@@ -247,6 +297,12 @@ export class PengajuanService {
         }
     }
 
+    /**
+     * pengajuan masuk
+     * 
+     * @param adminId 
+     * @returns 
+     */
     async pengajuanMasuk(adminId: number) {
         try {
             const checkUser = await this.prisma.admin.findUnique({

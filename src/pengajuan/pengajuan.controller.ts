@@ -67,5 +67,11 @@ export class PengajuanController {
     async tolakPengajuan(@Param('adminId', ParseIntPipe)adminId: number, @Param('idPengajuan', ParseIntPipe)idPengajuan: number){
       return await this.pengajuan.tolakPengajuan(adminId, idPengajuan)
     }
+    
+    @Patch(':adminId/:idPengajuan/selesai')
+    @UseGuards(AuthGuard)
+    async selesaiPengajuan(@Param('adminId', ParseIntPipe)adminId: number, @Param('idPengajuan', ParseIntPipe)idPengajuan: number){
+      return await this.pengajuan.selesaiPengajuan(adminId, idPengajuan)
+    }
 
 }
