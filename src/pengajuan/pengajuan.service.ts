@@ -1,6 +1,7 @@
 import { HttpCode, HttpException, HttpStatus, Injectable, ParseIntPipe } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { PengajuannDto } from './dto/tambahPengajuan.dto';
+import { LaporanDto } from './dto/tambahLaporan.dto';
 
 @Injectable()
 export class PengajuanService {
@@ -199,6 +200,115 @@ export class PengajuanService {
                 statusCode: HttpStatus.OK,
                 message: 'Data riwayat pengajuan supplier',
                 data: riwayat
+            }
+        } catch (error) {
+            console.log(error);
+            return {
+                statusCode: HttpStatus.BAD_REQUEST,
+                message: error.message
+            }
+            
+        }
+    }
+
+    async tambahLaporan(supplierId: number, data: LaporanDto) {
+        try {
+            const supplier = await this.prisma.supplier.findFirst({
+                where:{
+                    id: supplierId
+                }
+            })
+
+            if(!supplier) {
+                throw new HttpException('Bad Request', HttpStatus.NOT_FOUND);
+            }
+
+            const idPengajuan = parseInt(data.id_pengajuan); 
+
+            await this.prisma.laporan.create({
+                data: {
+                    id_pengajuan: idPengajuan,
+                    id_supplier: supplierId,
+                    laporan: data.laporan
+                }
+            })
+
+            return {
+                statusCode: HttpStatus.CREATED,
+                message: "Data laporan berhasil ditambahkan"
+            }
+        } catch (error) {
+            console.log(error);
+            
+            return {
+                statusCode: HttpStatus.BAD_REQUEST,
+                message: error.message
+            }
+        }
+    }
+
+    async pengajuanMasuk(adminId: number) {
+        try {
+            const checkUser = await this.prisma.admin.findUnique({
+                where: {
+                    id: adminId
+                }
+            });
+
+            if(!checkUser) {
+                throw new HttpException('Bad Request', HttpStatus.NOT_FOUND)
+            }
+
+            const data = [];
+            const pengajuan = await this.prisma.pengajuan.findMany({
+                where: {
+                    status: 1
+                }
+            })
+
+            for (let x = 0; x < pengajuan.length; x++) {
+                const idPengajuan = pengajuan[x].id;
+                const idPengadaan = pengajuan[x].id_pengadaan;
+                const idSupplier = pengajuan[x].id_supplier;
+                const proposal = pengajuan[x].proposal;
+                const anggaranPengajuan = pengajuan[x].anggaran;
+                const statusPengajuan = pengajuan[x].status;
+                const pengadaan = await this.prisma.pengadaan.findFirst({
+                    where: {
+                        id: idPengadaan
+                    }
+                })
+
+                const supplier = await this.prisma.supplier.findFirst({
+                    where: {
+                        id: idSupplier
+                    }
+                })
+
+                const laporan = await this.prisma.laporan.findFirst({
+                    where: {
+                        id_pengajuan: idPengajuan
+                    }
+                })
+
+                 data.push ({
+                    'idPengajuan':  idPengajuan,
+                    'namaPengadaan': pengadaan.nama_pengadaan,
+                    'gambar': pengadaan.gambar,
+                    'anggaran': pengadaan.anggaran,
+                    'proposal': proposal,
+                    'anggaranPengajuan': anggaranPengajuan,
+                    'statusPengajuan': statusPengajuan,
+                    'namaSupplier': supplier.nama_usaha,
+                    'emailSupplier': supplier.email,
+                    'alamatSupplier': supplier.alamat,
+                    'laporan': laporan.laporan
+                })
+            }
+            return {
+                statusCode: HttpStatus.OK,
+                message: 'Data riwayat pengajuan supplier',
+                data: data
             }
         } catch (error) {
             console.log(error);
