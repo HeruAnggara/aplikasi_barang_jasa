@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Patch, Post, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { PengajuanService } from './pengajuan.service';
 import { AuthGuard } from 'src/admin/admin.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -49,7 +49,7 @@ export class PengajuanController {
     @UseInterceptors(
         FileInterceptor('laporan', {
           storage: diskStorage({
-            destination: 'public/uploads/proposal',
+            destination: 'public/uploads/laporan',
             filename: (req, file, cb) => {
               cb(null, file.originalname);
             },
@@ -79,4 +79,12 @@ export class PengajuanController {
       return await this.pengajuan.selesaiPengajuan(adminId, idPengajuan)
     }
 
+    @Delete(':adminId/:idLaporan/laporan')
+    @UseGuards(AuthGuard)
+    async tolakLaporan(
+      @Param('adminId', ParseIntPipe) adminId: number,
+      @Param('idLaporan', ParseIntPipe) idLaporan: number
+      ) {
+        return await this.pengajuan.tolakLaporan(adminId, idLaporan);
+    }
 }

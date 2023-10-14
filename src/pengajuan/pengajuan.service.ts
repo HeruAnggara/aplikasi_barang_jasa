@@ -2,6 +2,7 @@ import { HttpCode, HttpException, HttpStatus, Injectable, ParseIntPipe } from '@
 import { PrismaService } from 'src/prisma/prisma.service';
 import { PengajuannDto } from './dto/tambahPengajuan.dto';
 import { LaporanDto } from './dto/tambahLaporan.dto';
+import * as fs from 'fs';
 
 @Injectable()
 export class PengajuanService {
@@ -376,6 +377,12 @@ export class PengajuanService {
         }
     }
 
+    /**
+     * riwayat pengakuan selesai
+     * 
+     * @param supplierId 
+     * @returns 
+     */
     async riwayatPengajuanSelesai(supplierId: number) {
         try {
             const checkUser = await this.prisma.supplier.findUnique({
@@ -440,6 +447,49 @@ export class PengajuanService {
                 message: error.message
             }
             
+        }
+    }
+
+    async tolakLaporan(adminId: number, idLaporan: number) {
+        try {
+            const checkUser = await this.prisma.admin.findFirst({
+                where: {
+                    id: adminId
+                }
+            })
+
+            const laporan = await this.prisma.laporan.findUnique({
+                where: {
+                  id: idLaporan,
+                },
+            });
+
+            if(!checkUser && !laporan) {
+                throw new HttpException('Bad Request', HttpStatus.NOT_FOUND);
+            }
+
+            const filePath = `public${laporan.laporan}`;
+        
+            await fs.promises.unlink(filePath);
+            await this.prisma.laporan.update({
+                where: {
+                    id: idLaporan
+                },
+                data: {
+                    laporan: "-"
+                  },
+            })
+
+            return {
+                statusCode: HttpStatus.OK,
+                message: "Pengajuan laporan telah ditolak"
+            }
+            
+        } catch (error) {
+            return {
+                statusCode: HttpStatus.BAD_REQUEST,
+                message: `Gagal menolak laporan: ${error.message}`
+            }    
         }
     }
 }
