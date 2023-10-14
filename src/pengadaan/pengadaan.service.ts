@@ -204,6 +204,14 @@ export class PengadaanService {
         }
     }
 
+    /**
+     * Update data pengadaan
+     * 
+     * @param adminId 
+     * @param idPengadaan 
+     * @param data 
+     * @returns 
+     */
     async updateDataPengadaan(adminId: number, idPengadaan: number, data: UpdatePengadaanDto){
         try {
             const checkUser = await this.prisma.admin.findFirst({
