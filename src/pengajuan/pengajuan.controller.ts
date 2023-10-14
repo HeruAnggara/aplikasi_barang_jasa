@@ -15,6 +15,11 @@ export class PengajuanController {
     async riwayatPengajuan(@Param('supplierId', ParseIntPipe)supplierId: number, ){
       return await this.pengajuan.riwayatPengajuan(supplierId)
     }
+    @Get(':supplierId/riwayat/selesai')
+    @UseGuards(AuthGuard)
+    async riwayatPengajuanSelesai(@Param('supplierId', ParseIntPipe)supplierId: number, ){
+      return await this.pengajuan.riwayatPengajuanSelesai(supplierId)
+    }
     
     @Get(':adminId/laporan_pengajuan')
     @UseGuards(AuthGuard)

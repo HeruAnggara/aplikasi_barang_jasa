@@ -375,4 +375,71 @@ export class PengajuanService {
             
         }
     }
+
+    async riwayatPengajuanSelesai(supplierId: number) {
+        try {
+            const checkUser = await this.prisma.supplier.findUnique({
+                where: {
+                    id: supplierId
+                }
+            });
+
+            if(!checkUser) {
+                throw new HttpException('Bad Request', HttpStatus.NOT_FOUND)
+            }
+
+            const riwayat = [];
+            const pengajuan = await this.prisma.pengajuan.findMany({
+                where: {
+                    id_supplier: checkUser.id,
+                    status: 3
+                }
+            })
+
+            for (let x = 0; x < pengajuan.length; x++) {
+                const idPengajuan = pengajuan[x].id;
+                const idPengadaan = pengajuan[x].id_pengadaan;
+                const idSupplier = pengajuan[x].id_supplier;
+                const proposal = pengajuan[x].proposal;
+                const anggaranPengajuan = pengajuan[x].anggaran;
+                const statusPengajuan = pengajuan[x].status;
+                const pengadaan = await this.prisma.pengadaan.findFirst({
+                    where: {
+                        id: idPengadaan
+                    }
+                })
+
+                const supplier = await this.prisma.supplier.findFirst({
+                    where: {
+                        id: idSupplier
+                    }
+                })
+
+                 riwayat.push ({
+                    'idPengajuan':  idPengajuan,
+                    'namaPengadaan': pengadaan.nama_pengadaan,
+                    'gambar': pengadaan.gambar,
+                    'anggaran': pengadaan.anggaran,
+                    'proposal': proposal,
+                    'anggaranPengajuan': anggaranPengajuan,
+                    'statusPengajuan': statusPengajuan,
+                    'namaSupplier': supplier.nama_usaha,
+                    'emailSupplier': supplier.email,
+                    'alamatSupplier': supplier.alamat
+                })
+            }
+            return {
+                statusCode: HttpStatus.OK,
+                message: 'Data riwayat pengajuan supplier',
+                data: riwayat
+            }
+        } catch (error) {
+            console.log(error);
+            return {
+                statusCode: HttpStatus.BAD_REQUEST,
+                message: error.message
+            }
+            
+        }
+    }
 }
