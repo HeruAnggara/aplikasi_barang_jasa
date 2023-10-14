@@ -14,6 +14,12 @@ export class AdminController {
     async listAdmin(@Param('adminId', ParseIntPipe) adminId: number) {
         return await this.adminService.listAdmin(adminId);
     }
+    
+    @Get(':adminId/list/suplier')
+    @UseGuards(AuthGuard)
+    async listSuplier(@Param('adminId', ParseIntPipe) adminId: number) {
+        return await this.adminService.listSuplier(adminId);
+    }
 
     @UsePipes(ValidationPipe)
     @Post('register')

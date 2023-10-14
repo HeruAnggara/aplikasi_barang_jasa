@@ -136,6 +136,12 @@ export class AdminService {
       }
     }
 
+    /**
+     * list admin
+     * 
+     * @param adminId 
+     * @returns 
+     */
     async listAdmin(adminId: number) {
       try {
         const checkUser = await this.prisma.admin.findFirst({
@@ -162,7 +168,34 @@ export class AdminService {
       } catch (error) {
         return {
           statusCode: HttpStatus.BAD_REQUEST,
-          message: `Gagal menolak laporan: ${error.message}`
+          message: `Admin tidak ditemukan`
+      } 
+      }
+    }
+    
+    async listSuplier(adminId: number) {
+      try {
+        const checkUser = await this.prisma.admin.findFirst({
+          where: {
+              id: adminId
+          }
+        })
+  
+        if(!checkUser) {
+          throw new HttpException('Bad Request', HttpStatus.NOT_FOUND);
+        }
+  
+        const data = await this.prisma.supplier.findMany()
+
+        return {
+          statusCode: HttpStatus.OK,
+          message: 'List Data suplier',
+          data: data
+        }
+      } catch (error) {
+        return {
+          statusCode: HttpStatus.BAD_REQUEST,
+          message: `Admin tidak ditemukan`
       } 
       }
     }
