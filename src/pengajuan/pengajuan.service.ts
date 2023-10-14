@@ -450,6 +450,13 @@ export class PengajuanService {
         }
     }
 
+    /**
+     * tolak laporan
+     * 
+     * @param adminId 
+     * @param idLaporan 
+     * @returns 
+     */
     async tolakLaporan(adminId: number, idLaporan: number) {
         try {
             const checkUser = await this.prisma.admin.findFirst({
