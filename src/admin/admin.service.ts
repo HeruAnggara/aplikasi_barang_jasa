@@ -135,4 +135,35 @@ export class AdminService {
         }
       }
     }
+
+    async listAdmin(adminId: number) {
+      try {
+        const checkUser = await this.prisma.admin.findFirst({
+          where: {
+              id: adminId
+          }
+        })
+  
+        if(!checkUser) {
+          throw new HttpException('Bad Request', HttpStatus.NOT_FOUND);
+        }
+  
+        const data = await this.prisma.admin.findMany({
+          where: {
+            status: 1
+          }
+        })
+
+        return {
+          statusCode: HttpStatus.OK,
+          message: 'List Data Admin',
+          data: data
+        }
+      } catch (error) {
+        return {
+          statusCode: HttpStatus.BAD_REQUEST,
+          message: `Gagal menolak laporan: ${error.message}`
+      } 
+      }
+    }
 }

@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Param, ParseIntPipe, Post, Put, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { LoginDto } from './dto/login.dto';
 import { AdminService } from './admin.service';
 import { RegisterDto } from './dto/registerdto';
@@ -8,6 +8,12 @@ import { AuthGuard } from './admin.guard';
 @Controller('admin')
 export class AdminController {
     constructor(private adminService: AdminService){}
+
+    @Get(':adminId/list/admin')
+    @UseGuards(AuthGuard)
+    async listAdmin(@Param('adminId', ParseIntPipe) adminId: number) {
+        return await this.adminService.listAdmin(adminId);
+    }
 
     @UsePipes(ValidationPipe)
     @Post('register')
