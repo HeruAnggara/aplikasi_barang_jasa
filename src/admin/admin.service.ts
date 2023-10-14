@@ -6,6 +6,7 @@ import { JwtService } from '@nestjs/jwt';
 import { jwt_config } from 'src/config/config_jwt';
 import { RegisterDto } from './dto/registerdto';
 import { EditDto } from './dto/edit.dto';
+import { NonAktifDto } from './dto/nonaktif.dto';
 
 @Injectable()
 export class AdminService {
@@ -173,6 +174,12 @@ export class AdminService {
       }
     }
     
+    /**
+     * list suplier
+     * 
+     * @param adminId 
+     * @returns 
+     */
     async listSuplier(adminId: number) {
       try {
         const checkUser = await this.prisma.admin.findFirst({
@@ -196,7 +203,51 @@ export class AdminService {
         return {
           statusCode: HttpStatus.BAD_REQUEST,
           message: `Admin tidak ditemukan`
-      } 
+        } 
+      }
+    }
+
+    /**
+     * non aktif suplier
+     * 
+     * @param adminId 
+     * @param suplierId 
+     * @returns 
+     */
+    async nonAktifSuplier(adminId: number, data: NonAktifDto) {
+      try {
+        const checkUser = await this.prisma.admin.findUnique({
+          where: {
+              id: adminId
+          }
+        });
+
+        if(!checkUser) {
+            throw new HttpException('Bad Request', HttpStatus.NOT_FOUND)
+        }
+
+        const suplierId = parseInt(data.id)
+        await this.prisma.supplier.update({
+            where: {
+                id: suplierId
+            },
+            data: {
+                status:{
+                    set: 0
+                }
+            }
+        })
+        return {
+            statusCode: HttpStatus.OK,
+            message: 'Data suplier dinonaktifkan'
+        }
+      } catch (error) {
+        console.log(error.message);
+        
+        return {
+          statusCode: HttpStatus.BAD_REQUEST,
+          message: `Admin tidak ditemukan`
+        } 
       }
     }
 }

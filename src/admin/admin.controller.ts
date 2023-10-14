@@ -1,9 +1,10 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Put, Req, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { LoginDto } from './dto/login.dto';
 import { AdminService } from './admin.service';
 import { RegisterDto } from './dto/registerdto';
 import { EditDto } from './dto/edit.dto';
 import { AuthGuard } from './admin.guard';
+import { NonAktifDto } from './dto/nonaktif.dto';
 
 @Controller('admin')
 export class AdminController {
@@ -38,6 +39,12 @@ export class AdminController {
     @UseGuards(AuthGuard)
     async editDataAdmin(@Param('adminId', ParseIntPipe) adminId: number, @Body() newData: EditDto) {        
         return this.adminService.editDataAdmin(adminId, newData);
+    }
+
+    @Patch(':adminId/nonaktif')
+    @UseGuards(AuthGuard)
+    async nonAktifSuplier(@Param('adminId', ParseIntPipe) adminId: number, @Body() suplierId: NonAktifDto) {
+        return await this.adminService.nonAktifSuplier(adminId, suplierId);
     }
     
     @Delete(':adminId/delete')
