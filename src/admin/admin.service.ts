@@ -250,4 +250,48 @@ export class AdminService {
         } 
       }
     }
+    
+    /**
+     * aktif suplier
+     * 
+     * @param adminId 
+     * @param data 
+     * @returns 
+     */
+    async aktifSuplier(adminId: number, data: NonAktifDto) {
+      try {
+        const checkUser = await this.prisma.admin.findUnique({
+          where: {
+              id: adminId
+          }
+        });
+
+        if(!checkUser) {
+            throw new HttpException('Bad Request', HttpStatus.NOT_FOUND)
+        }
+
+        const suplierId = parseInt(data.id)
+        await this.prisma.supplier.update({
+            where: {
+                id: suplierId
+            },
+            data: {
+                status:{
+                    set: 1
+                }
+            }
+        })
+        return {
+            statusCode: HttpStatus.OK,
+            message: 'Data suplier berhasil diverifikasi'
+        }
+      } catch (error) {
+        console.log(error.message);
+        
+        return {
+          statusCode: HttpStatus.BAD_REQUEST,
+          message: `Admin tidak ditemukan`
+        } 
+      }
+    }
 }

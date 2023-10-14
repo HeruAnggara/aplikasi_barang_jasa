@@ -47,6 +47,12 @@ export class AdminController {
         return await this.adminService.nonAktifSuplier(adminId, suplierId);
     }
     
+    @Patch(':adminId/aktif')
+    @UseGuards(AuthGuard)
+    async aktifSuplier(@Param('adminId', ParseIntPipe) adminId: number, @Body() suplierId: NonAktifDto) {
+        return await this.adminService.aktifSuplier(adminId, suplierId);
+    }
+    
     @Delete(':adminId/delete')
     @UseGuards(AuthGuard)
     async hapusAdmin(@Param('adminId', ParseIntPipe) adminId: number) {        
