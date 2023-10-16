@@ -107,6 +107,13 @@ export class SuplierService {
       return 'Pengguna berhasil logout';
     }
 
+    /**
+     * edit password
+     * 
+     * @param suplierId 
+     * @param data 
+     * @returns 
+     */
     async editPassword(suplierId: number, data: EditPasswordDTO){
       try {
         const checkUserExists = await this.prisma.supplier.findFirst({
