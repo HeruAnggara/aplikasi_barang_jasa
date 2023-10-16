@@ -7,6 +7,7 @@ import { jwt_config } from 'src/config/config_jwt';
 import { RegisterDto } from './dto/registerdto';
 import { EditDto } from './dto/edit.dto';
 import { NonAktifDto } from './dto/nonaktif.dto';
+import { EditPasswordDTO } from './dto/editPassword.dto';
 
 @Injectable()
 export class AdminService {
@@ -292,6 +293,56 @@ export class AdminService {
           statusCode: HttpStatus.BAD_REQUEST,
           message: `Admin tidak ditemukan`
         } 
+      }
+    }
+
+    /**
+     * edit password
+     * 
+     * @param adminId 
+     * @param data 
+     * @returns 
+     */
+    async editPassword(adminId: number, data: EditPasswordDTO){
+      try {
+        const checkUserExists = await this.prisma.admin.findFirst({
+          where: {
+              id: adminId,
+          },
+      });
+      if (!checkUserExists) {
+          throw new HttpException('Pengguna tidak ditemukan', HttpStatus.NOT_FOUND);
+      }
+
+      const checkPassword = await compare(
+          data.oldPassword,
+          checkUserExists.password,
+        );
+        if (checkPassword) {
+          data.newPassword = await hash(data.newPassword, 12);
+          await this.prisma.admin.update({
+            where: {
+              id: adminId
+            },
+            data: {
+              password: data.newPassword
+            }
+          })
+          return {
+            statusCode: 200,
+            message: 'Edit paswword admin berhasil',
+          };
+        } else {
+          throw new HttpException(
+            'Password tidak cocok',
+            HttpStatus.UNAUTHORIZED,
+          );
+        }
+      } catch (error) {
+        return {
+          statusCode: HttpStatus.BAD_REQUEST,
+          message: error.message
+        }
       }
     }
 }

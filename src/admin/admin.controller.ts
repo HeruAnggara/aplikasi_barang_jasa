@@ -5,6 +5,7 @@ import { RegisterDto } from './dto/registerdto';
 import { EditDto } from './dto/edit.dto';
 import { AuthGuard } from './admin.guard';
 import { NonAktifDto } from './dto/nonaktif.dto';
+import { EditPasswordDTO } from './dto/editPassword.dto';
 
 @Controller('admin')
 export class AdminController {
@@ -51,6 +52,12 @@ export class AdminController {
     @UseGuards(AuthGuard)
     async aktifSuplier(@Param('adminId', ParseIntPipe) adminId: number, @Body() suplierId: NonAktifDto) {
         return await this.adminService.aktifSuplier(adminId, suplierId);
+    }
+
+    @Patch(':adminId/edit/password')
+    @UseGuards(AuthGuard)
+    async editPassword(@Param('adminId', ParseIntPipe) adminId: number, @Body() data: EditPasswordDTO) {
+        return await this.adminService.editPassword(adminId, data);
     }
     
     @Delete(':adminId/delete')
