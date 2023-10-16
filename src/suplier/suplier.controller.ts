@@ -1,7 +1,9 @@
-import { Body, Controller, Get, Post, Req, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Param, ParseIntPipe, Patch, Post, Req, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { SuplierService } from './suplier.service';
 import { RegisterDTO } from './dto/registrasi.dto';
 import { LoginDto } from './dto/login.dto';
+import { EditPasswordDTO } from './dto/editPassword.dto';
+import { AuthGuard } from 'src/admin/admin.guard';
 
 @Controller('suplier')
 export class SuplierController {
@@ -22,5 +24,11 @@ export class SuplierController {
     @Post('logout')
     async logout(@Req() data: LoginDto) {
         return await this.suplierService.logout(data);
+    }
+
+    @Patch(':suplierId/edit/password')
+    @UseGuards(AuthGuard)
+    async editPassword(@Param('suplierId', ParseIntPipe) suplierId: number, @Body() data: EditPasswordDTO) {
+        return await this.suplierService.editPassword(suplierId, data);
     }
 }

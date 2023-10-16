@@ -6,6 +6,7 @@ import { LoginDto } from './dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
 import { jwt_config } from 'src/config/config_jwt';
 import { useContainer } from 'class-validator';
+import { EditPasswordDTO } from './dto/editPassword.dto';
 
 @Injectable()
 export class SuplierService {
@@ -105,6 +106,49 @@ export class SuplierService {
 
       return 'Pengguna berhasil logout';
     }
+
+    async editPassword(suplierId: number, data: EditPasswordDTO){
+      try {
+        const checkUserExists = await this.prisma.supplier.findFirst({
+          where: {
+              id: suplierId,
+          },
+      });
+      if (!checkUserExists) {
+          throw new HttpException('Pengguna tidak ditemukan', HttpStatus.NOT_FOUND);
+      }
+
+      const checkPassword = await compare(
+          data.oldPassword,
+          checkUserExists.password,
+        );
+        if (checkPassword) {
+          data.newPassword = await hash(data.newPassword, 12);
+          await this.prisma.supplier.update({
+            where: {
+              id: suplierId
+            },
+            data: {
+              password: data.newPassword
+            }
+          })
+          return {
+            statusCode: 200,
+            message: 'Edit paswword berhasil',
+          };
+        } else {
+          throw new HttpException(
+            'Password tidak cocok',
+            HttpStatus.UNAUTHORIZED,
+          );
+        }
+      } catch (error) {
+        return {
+          statusCode: HttpStatus.BAD_REQUEST,
+          message: error.message
+        }
+      }
+  }
 
     getSuplier(){
         return{
