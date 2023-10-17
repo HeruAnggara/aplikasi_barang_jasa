@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { AuthGuard } from 'src/admin/admin.guard';
 import { PengadaanService } from './pengadaan.service';
 import { PengadaanDto } from './dto/pengadaan.dto';
@@ -13,8 +13,12 @@ export class PengadaanController {
 
     @Get()
     @UseGuards(AuthGuard)
-    async listPengadaan() {        
-        return await this.pengadaanService.listPengadaan();
+    async listPengadaan(
+      @Query('keyword') keyword: any,
+      @Query('page') page: number,
+      @Query('limit') limit: number,
+    ) {        
+        return await this.pengadaanService.listPengadaan(keyword, page, limit);
     }
 
     @Post(':adminId')

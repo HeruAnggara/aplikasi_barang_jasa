@@ -4,6 +4,7 @@ import { PengadaanDto } from './dto/pengadaan.dto';
 import * as fs from 'fs';
 import { UpdateGambarDto } from './dto/updateGambar.dto';
 import { UpdatePengadaanDto } from './dto/updatePengadaan.dto';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class PengadaanService {
@@ -12,14 +13,40 @@ export class PengadaanService {
     /**
      * List Pengadaan
      */
-    async listPengadaan() {
+    async listPengadaan(keyword: any, page: number = 1, limit: number = 10) {
         try {
-            const allPengadaan = await this.prisma.pengadaan.findMany();
+            const skip = (page - 1) * limit;
+
+            const where: Prisma.pengadaanWhereInput = keyword
+            ? {
+                OR: [
+                {
+                    nama_pengadaan: {
+                    contains: keyword
+                    },
+                    status: 1
+                },
+                ],
+            }
+            : {};
+
+            const allPengadaan = await this.prisma.pengadaan.findMany({
+                where,
+                skip,
+                take: limit,
+            });
+
+            const totalItems = await this.prisma.pengadaan.count({ where });
             
             return {
                 statusCode: HttpStatus.OK,
                 message: "Data list pengadaan",
-                data: allPengadaan
+                data: {
+                    allPengadaan,
+                    totalItems,
+                    totalPages: Math.ceil(totalItems / limit),
+                    currentPage: page
+                }
             }
         } catch (error) {
             return {
