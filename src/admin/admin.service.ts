@@ -8,6 +8,7 @@ import { RegisterDto } from './dto/registerdto';
 import { EditDto } from './dto/edit.dto';
 import { NonAktifDto } from './dto/nonaktif.dto';
 import { EditPasswordDTO } from './dto/editPassword.dto';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class AdminService {
@@ -177,11 +178,13 @@ export class AdminService {
     
     /**
      * list suplier
-     * 
      * @param adminId 
+     * @param keyword 
+     * @param page 
+     * @param limit 
      * @returns 
      */
-    async listSuplier(adminId: number) {
+    async listSuplier(adminId: number, keyword: any, page: number = 1, limit: number = 10) {
       try {
         const checkUser = await this.prisma.admin.findFirst({
           where: {
@@ -193,12 +196,38 @@ export class AdminService {
           throw new HttpException('Bad Request', HttpStatus.NOT_FOUND);
         }
   
-        const data = await this.prisma.supplier.findMany()
+        const search = keyword;
+        const skip = (page - 1) * limit;
+
+        const where: Prisma.supplierWhereInput = keyword
+      ? {
+          OR: [
+            {
+              nama_usaha: {
+                contains: keyword
+              },
+            },
+          ],
+        }
+      : {};
+        
+        const data = await this.prisma.supplier.findMany({
+          where,
+          skip,
+          take: limit,
+        })
+
+        const totalItems = await this.prisma.supplier.count({ where });
 
         return {
           statusCode: HttpStatus.OK,
           message: 'List Data suplier',
-          data: data
+          data: {
+            data,
+            totalItems,
+            totalPages: Math.ceil(totalItems / limit),
+            currentPage: page,
+          }
         }
       } catch (error) {
         return {

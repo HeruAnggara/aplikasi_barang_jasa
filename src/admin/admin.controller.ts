@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Put, Req, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Put, Query, Req, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { LoginDto } from './dto/login.dto';
 import { AdminService } from './admin.service';
 import { RegisterDto } from './dto/registerdto';
@@ -19,8 +19,13 @@ export class AdminController {
     
     @Get(':adminId/list/suplier')
     @UseGuards(AuthGuard)
-    async listSuplier(@Param('adminId', ParseIntPipe) adminId: number) {
-        return await this.adminService.listSuplier(adminId);
+    async listSuplier(
+        @Param('adminId', ParseIntPipe) adminId: number,
+        @Query('keyword') keyword: any,
+        @Query('page') page: number,
+        @Query('limit') limit: number,
+        ) {
+        return await this.adminService.listSuplier(adminId, keyword, page, limit);
     }
 
     @UsePipes(ValidationPipe)
