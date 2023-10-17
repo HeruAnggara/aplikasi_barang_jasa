@@ -13,8 +13,13 @@ export class AdminController {
 
     @Get(':adminId/list/admin')
     @UseGuards(AuthGuard)
-    async listAdmin(@Param('adminId', ParseIntPipe) adminId: number) {
-        return await this.adminService.listAdmin(adminId);
+    async listAdmin(
+        @Param('adminId', ParseIntPipe) adminId: number,
+        @Query('keyword') keyword: any,
+        @Query('page') page: number,
+        @Query('limit') limit: number,
+        ) {
+        return await this.adminService.listAdmin(adminId, keyword, page, limit);
     }
     
     @Get(':adminId/list/suplier')

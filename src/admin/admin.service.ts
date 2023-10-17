@@ -145,7 +145,7 @@ export class AdminService {
      * @param adminId 
      * @returns 
      */
-    async listAdmin(adminId: number) {
+    async listAdmin(adminId: number, keyword: any, page: number = 1, limit: number = 10) {
       try {
         const checkUser = await this.prisma.admin.findFirst({
           where: {
@@ -157,16 +157,38 @@ export class AdminService {
           throw new HttpException('Bad Request', HttpStatus.NOT_FOUND);
         }
   
-        const data = await this.prisma.admin.findMany({
-          where: {
-            status: 1
+        const skip = (page - 1) * limit;
+
+        const where: Prisma.adminWhereInput = keyword
+        ? {
+            OR: [
+              {
+                nama: {
+                  contains: keyword
+                },
+                status: 1
+              },
+            ],
           }
+        : {};
+        
+        const data = await this.prisma.admin.findMany({
+          where,
+          skip,
+          take: limit,
         })
+
+        const totalItems = await this.prisma.admin.count({ where });
 
         return {
           statusCode: HttpStatus.OK,
-          message: 'List Data Admin',
-          data: data
+          message: 'List Data suplier',
+          data: {
+            data,
+            totalItems,
+            totalPages: Math.ceil(totalItems / limit),
+            currentPage: page,
+          }
         }
       } catch (error) {
         return {
@@ -200,16 +222,16 @@ export class AdminService {
         const skip = (page - 1) * limit;
 
         const where: Prisma.supplierWhereInput = keyword
-      ? {
-          OR: [
-            {
-              nama_usaha: {
-                contains: keyword
+        ? {
+            OR: [
+              {
+                nama_usaha: {
+                  contains: keyword
+                },
               },
-            },
-          ],
-        }
-      : {};
+            ],
+          }
+        : {};
         
         const data = await this.prisma.supplier.findMany({
           where,
