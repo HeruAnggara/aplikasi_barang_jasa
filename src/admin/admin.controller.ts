@@ -18,8 +18,10 @@ export class AdminController {
         @Query('keyword') keyword: any,
         @Query('page') page: number,
         @Query('limit') limit: number,
+        @Req() req
         ) {
-        return await this.adminService.listAdmin(adminId, keyword, page, limit);
+        const {id} = req.user    
+        return await this.adminService.listAdmin(adminId, keyword, page, limit, id);
     }
     
     @Get(':adminId/list/suplier')

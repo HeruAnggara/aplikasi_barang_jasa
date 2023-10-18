@@ -25,7 +25,7 @@ export class AdminService {
               email: data.email
           }
       });
-
+      
       if(checkUser) {
           throw new HttpException('Data tersebut sudah terdaftar', HttpStatus.FOUND);
       }
@@ -145,7 +145,7 @@ export class AdminService {
      * @param adminId 
      * @returns 
      */
-    async listAdmin(adminId: number, keyword: any, page: number = 1, limit: number = 10) {
+    async listAdmin(adminId: number, keyword: any, page: number = 1, limit: number = 10, id: number) {
       try {
         const checkUser = await this.prisma.admin.findFirst({
           where: {
@@ -153,7 +153,7 @@ export class AdminService {
           }
         })
   
-        if(!checkUser) {
+        if(checkUser.id !== id) {
           throw new HttpException('Bad Request', HttpStatus.NOT_FOUND);
         }
   
@@ -182,7 +182,7 @@ export class AdminService {
 
         return {
           statusCode: HttpStatus.OK,
-          message: 'List Data suplier',
+          message: 'List data admin',
           data: {
             data,
             totalItems,
