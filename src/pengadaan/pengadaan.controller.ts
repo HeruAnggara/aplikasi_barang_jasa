@@ -12,7 +12,6 @@ export class PengadaanController {
     constructor(private pengadaanService: PengadaanService){}
 
     @Get()
-    @UseGuards(AuthGuard)
     async listPengadaan(
       @Query('keyword') keyword: any,
       @Query('page') page: number,
@@ -34,7 +33,8 @@ export class PengadaanController {
         }),
       )
     async tambahPengadaan(@Param('adminId', ParseIntPipe) adminId: number, @Body() data: PengadaanDto, @UploadedFile() file: Express.Multer.File){
-        return await this.pengadaanService.tambahPengadaan(adminId, data, '/uploads/image/' + file.filename,);
+        data.gambar = '/uploads/image/' + file.filename;
+        return await this.pengadaanService.tambahPengadaan(adminId, data);
     }
 
     @Delete(':adminId/:idPengadaan/gambar')
@@ -88,8 +88,9 @@ export class PengadaanController {
     }
 
     @Get('/aktif')
-    @UseGuards(AuthGuard)
-    async listPengadaanAktif() {
-      return await this.pengadaanService.listPengadaanAktif();
+    async listPengadaanAktif(@Query('keyword') keyword: any,
+    @Query('page') page: number,
+    @Query('limit') limit: number,) {
+      return await this.pengadaanService.listPengadaanAktif(keyword, page, limit);
     }
 }

@@ -24,7 +24,6 @@ export class PengadaanService {
                     nama_pengadaan: {
                     contains: keyword
                     },
-                    status: 1
                 },
                 ],
             }
@@ -62,7 +61,7 @@ export class PengadaanService {
      * @param adminId 
      * @param idPengadaan 
      */
-    async tambahPengadaan(adminId: number, data: PengadaanDto, gambar){
+    async tambahPengadaan(adminId: number, data: PengadaanDto){
         try {
               const checkUser = await this.prisma.admin.findFirst({
                 where: {
@@ -76,7 +75,7 @@ export class PengadaanService {
                         nama_pengadaan: data.nama_pengadaan,
                         deskripsi: data.deskripsi,
                         anggaran: data.anggaran,
-                        gambar: gambar
+                        gambar: data.gambar
                     }
                   })
 
@@ -287,19 +286,40 @@ export class PengadaanService {
      * 
      * @returns 
      */
-    async listPengadaanAktif() {
+    async listPengadaanAktif(keyword: any, page: number = 1, limit: number = 10) {
         try {
+            const skip = (page - 1) * limit;
+
+            const where: Prisma.pengadaanWhereInput = keyword
+            ? {
+                OR: [
+                {
+                    nama_pengadaan: {
+                    contains: keyword
+                    },
+                    status: 1
+                },
+                ],
+            }
+            : {};
 
             const allPengadaan = await this.prisma.pengadaan.findMany({
-                where: {
-                    status: 1
-                }
+                where,
+                skip,
+                take: limit,
             });
+            
+            const totalItems = await this.prisma.pengadaan.count({ where });
             
             return {
                 statusCode: HttpStatus.OK,
                 message: "Data list pengadaan aktif",
-                data: allPengadaan
+                data: {
+                    allPengadaan,
+                    totalItems,
+                    totalPages: Math.ceil(totalItems / limit),
+                    currentPage: page
+                }
             }
         } catch (error) {
             return {
