@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, FileTypeValidator, Get, MaxFileSizeValidator, Param, ParseFilePipe, ParseIntPipe, Patch, Post, Query, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { AuthGuard } from 'src/admin/admin.guard';
 import { PengadaanService } from './pengadaan.service';
 import { PengadaanDto } from './dto/pengadaan.dto';
@@ -32,7 +32,16 @@ export class PengadaanController {
           }),
         }),
       )
-    async tambahPengadaan(@Param('adminId', ParseIntPipe) adminId: number, @Body() data: PengadaanDto, @UploadedFile() file: Express.Multer.File){
+    async tambahPengadaan(
+      @Param('adminId', ParseIntPipe) adminId: number, 
+      @Body() data: PengadaanDto, 
+      @UploadedFile(new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({ maxSize: 2000000 }),
+          new FileTypeValidator({ fileType: /image\/(jpeg|png|jpg)/ }),
+        ],
+      })) file: Express.Multer.File
+      ){
         data.gambar = '/uploads/image/' + file.filename;
         return await this.pengadaanService.tambahPengadaan(adminId, data);
     }
@@ -61,7 +70,12 @@ export class PengadaanController {
     async updateGambar(
       @Param('adminId', ParseIntPipe) adminId: number, 
       @Param('idPengadaan', ParseIntPipe) idPengadaan: number,
-      @UploadedFile() file: Express.Multer.File){
+      @UploadedFile(new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({ maxSize: 2000000 }),
+          new FileTypeValidator({ fileType: /image\/(jpeg|png|jpg)/ }),
+        ],
+      })) file: Express.Multer.File){
         const data: UpdateGambarDto = {
           gambar: '/uploads/image/' + file.filename, // Mengambil nama file gambar dari file yang diunggah
         };
@@ -90,7 +104,7 @@ export class PengadaanController {
     @Get('/aktif')
     async listPengadaanAktif(@Query('keyword') keyword: any,
     @Query('page') page: number,
-    @Query('limit') limit: number,) {
+    @Query('limit') limit: number) {
       return await this.pengadaanService.listPengadaanAktif(keyword, page, limit);
     }
 }
