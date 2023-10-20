@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, FileTypeValidator, Get, MaxFileSizeValidator, Param, ParseFilePipe, ParseIntPipe, Patch, Post, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { PengajuanService } from './pengajuan.service';
 import { AuthGuard } from 'src/admin/admin.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -39,7 +39,16 @@ export class PengajuanController {
           }),
         }),
       )
-    async tambahPengajuan(@Param('supplierId', ParseIntPipe) supplierId: number, @Body() data: PengajuannDto, @UploadedFile() file: Express.Multer.File) {
+    async tambahPengajuan(
+      @Param('supplierId', ParseIntPipe) supplierId: number, 
+      @Body() data: PengajuannDto, 
+      @UploadedFile(new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({ maxSize: 2000000 }),
+          new FileTypeValidator({ fileType: 'application/pdf' }),
+        ],
+      })) file: Express.Multer.File
+      ) {
       data.proposal = '/uploads/proposal/' + file.filename;
       return await this.pengajuan.tambahPengajuan(supplierId, data);
     }
@@ -56,7 +65,16 @@ export class PengajuanController {
           }),
         }),
       )
-    async tambahLaporan(@Param('supplierId', ParseIntPipe) supplierId: number, @Body() data: LaporanDto, @UploadedFile() file: Express.Multer.File) {
+    async tambahLaporan(
+      @Param('supplierId', ParseIntPipe) supplierId: number, 
+      @Body() data: LaporanDto, 
+      @UploadedFile(new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({ maxSize: 2000000 }),
+          new FileTypeValidator({ fileType: 'application/pdf' }),
+        ],
+      })) file: Express.Multer.File
+      ) {
       data.laporan = '/uploads/laporan/' + file.filename;
       return await this.pengajuan.tambahLaporan(supplierId, data);
     }

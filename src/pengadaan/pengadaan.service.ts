@@ -120,6 +120,7 @@ export class PengadaanService {
                 throw new HttpException('Bad Request', HttpStatus.NOT_FOUND);
             }
 
+            // const filePath = `public/uploads/image/${fileName}`;
             const filePath = `public${pengadaan.gambar}`;
         
             await fs.promises.unlink(filePath);
