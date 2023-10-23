@@ -475,7 +475,7 @@ export class PengajuanService {
                 throw new HttpException('Bad Request', HttpStatus.NOT_FOUND);
               }
 
-            const filePath = `public${laporan.laporan}`;
+            const filePath = `public/uploads/laporan/${laporan.laporan}`;
         
             await fs.promises.unlink(filePath);
             await this.prisma.laporan.update({

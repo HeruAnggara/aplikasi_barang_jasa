@@ -5,6 +5,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { PengajuannDto } from './dto/tambahPengajuan.dto';
 import { LaporanDto } from './dto/tambahLaporan.dto';
+import { extname } from 'path';
 
 @Controller('pengajuan')
 export class PengajuanController {
@@ -40,9 +41,19 @@ export class PengajuanController {
           storage: diskStorage({
             destination: 'public/uploads/proposal',
             filename: (req, file, cb) => {
-              cb(null, file.originalname);
+              const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+              cb(null, uniqueSuffix + extname(file.originalname));
             },
           }),
+          fileFilter: (req, file, cb) => {
+            if (extname(file.originalname) !== '.pdf') {
+              return cb(new Error('Only PDF files are allowed'), false);
+            }
+            if (file.size > 2 * 1024 * 1024) {
+              return cb(new Error('File size cannot exceed 2 MB'), false);
+            }
+            cb(null, true);
+          },
         }),
       )
     async tambahPengajuan(
@@ -57,7 +68,7 @@ export class PengajuanController {
       @Req() req
     ) {
       const {id} = req.user;
-      data.proposal = '/uploads/proposal/' + file.filename;
+      data.proposal = file.filename;
       return await this.pengajuan.tambahPengajuan(supplierId, data, id);
     }
     
@@ -68,9 +79,19 @@ export class PengajuanController {
           storage: diskStorage({
             destination: 'public/uploads/laporan',
             filename: (req, file, cb) => {
-              cb(null, file.originalname);
+              const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+              cb(null, uniqueSuffix + extname(file.originalname));
             },
           }),
+          fileFilter: (req, file, cb) => {
+            if (extname(file.originalname) !== '.pdf') {
+              return cb(new Error('Only PDF files are allowed'), false);
+            }
+            if (file.size > 2 * 1024 * 1024) {
+              return cb(new Error('File size cannot exceed 2 MB'), false);
+            }
+            cb(null, true);
+          },
         }),
       )
     async tambahLaporan(
@@ -85,7 +106,7 @@ export class PengajuanController {
       @Req() req
     ) {
       const {id} = req.user
-      data.laporan = '/uploads/laporan/' + file.filename;
+      data.laporan = file.filename;
       return await this.pengajuan.tambahLaporan(supplierId, data, id);
     }
 
