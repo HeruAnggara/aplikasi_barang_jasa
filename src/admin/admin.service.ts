@@ -95,13 +95,13 @@ export class AdminService {
      * Edit Data Admin
      * @param data
      */
-    async editDataAdmin(adminId: number, newData: EditDto) {
+    async editDataAdmin(adminId: number, newData: EditDto, id: number) {
       const existingAdmin = await this.prisma.admin.findUnique({
         where: { id: adminId },
       });
   
-      if (!existingAdmin) {
-        throw new HttpException('Admin tidak ditemukan', HttpStatus.NOT_FOUND);
+      if(existingAdmin.id !== id) {
+        throw new HttpException('Bad Request', HttpStatus.NOT_FOUND);
       }
   
       const updatedAdmin = await this.prisma.admin.update({
@@ -206,7 +206,7 @@ export class AdminService {
      * @param limit 
      * @returns 
      */
-    async listSuplier(adminId: number, keyword: any, page: number = 1, limit: number = 10) {
+    async listSuplier(adminId: number, keyword: any, page: number = 1, limit: number = 10, id: number) {
       try {
         const checkUser = await this.prisma.admin.findFirst({
           where: {
@@ -214,7 +214,7 @@ export class AdminService {
           }
         })
   
-        if(!checkUser) {
+        if(checkUser.id !== id) {
           throw new HttpException('Bad Request', HttpStatus.NOT_FOUND);
         }
   
@@ -266,7 +266,7 @@ export class AdminService {
      * @param suplierId 
      * @returns 
      */
-    async nonAktifSuplier(adminId: number, data: NonAktifDto) {
+    async nonAktifSuplier(adminId: number, data: NonAktifDto, id: number) {
       try {
         const checkUser = await this.prisma.admin.findUnique({
           where: {
@@ -274,8 +274,8 @@ export class AdminService {
           }
         });
 
-        if(!checkUser) {
-            throw new HttpException('Bad Request', HttpStatus.NOT_FOUND)
+        if(checkUser.id !== id) {
+          throw new HttpException('Bad Request', HttpStatus.NOT_FOUND);
         }
 
         const suplierId = parseInt(data.id)
@@ -310,7 +310,7 @@ export class AdminService {
      * @param data 
      * @returns 
      */
-    async aktifSuplier(adminId: number, data: NonAktifDto) {
+    async aktifSuplier(adminId: number, data: NonAktifDto, id: number) {
       try {
         const checkUser = await this.prisma.admin.findUnique({
           where: {
@@ -318,8 +318,8 @@ export class AdminService {
           }
         });
 
-        if(!checkUser) {
-            throw new HttpException('Bad Request', HttpStatus.NOT_FOUND)
+        if(checkUser.id !== id) {
+          throw new HttpException('Bad Request', HttpStatus.NOT_FOUND);
         }
 
         const suplierId = parseInt(data.id)
@@ -354,15 +354,15 @@ export class AdminService {
      * @param data 
      * @returns 
      */
-    async editPassword(adminId: number, data: EditPasswordDTO){
+    async editPassword(adminId: number, data: EditPasswordDTO, id: number){
       try {
         const checkUserExists = await this.prisma.admin.findFirst({
           where: {
               id: adminId,
           },
       });
-      if (!checkUserExists) {
-          throw new HttpException('Pengguna tidak ditemukan', HttpStatus.NOT_FOUND);
+      if(checkUserExists.id !== id) {
+        throw new HttpException('Bad Request', HttpStatus.NOT_FOUND);
       }
 
       const checkPassword = await compare(

@@ -31,8 +31,10 @@ export class AdminController {
         @Query('keyword') keyword: any,
         @Query('page') page: number,
         @Query('limit') limit: number,
+        @Req() req
         ) {
-        return await this.adminService.listSuplier(adminId, keyword, page, limit);
+        const {id} = req.user 
+        return await this.adminService.listSuplier(adminId, keyword, page, limit, id);
     }
 
     @UsePipes(ValidationPipe)
@@ -50,26 +52,34 @@ export class AdminController {
     @UsePipes(ValidationPipe)
     @Put(':adminId/edit')
     @UseGuards(AuthGuard)
-    async editDataAdmin(@Param('adminId', ParseIntPipe) adminId: number, @Body() newData: EditDto) {        
-        return this.adminService.editDataAdmin(adminId, newData);
+    async editDataAdmin(@Param('adminId', ParseIntPipe) adminId: number, @Body() newData: EditDto, @Req() req
+    ) {
+    const {id} = req.user        
+        return this.adminService.editDataAdmin(adminId, newData, id);
     }
 
     @Patch(':adminId/nonaktif')
     @UseGuards(AuthGuard)
-    async nonAktifSuplier(@Param('adminId', ParseIntPipe) adminId: number, @Body() suplierId: NonAktifDto) {
-        return await this.adminService.nonAktifSuplier(adminId, suplierId);
+    async nonAktifSuplier(@Param('adminId', ParseIntPipe) adminId: number, @Body() suplierId: NonAktifDto, @Req() req
+    ) {
+    const {id} = req.user 
+        return await this.adminService.nonAktifSuplier(adminId, suplierId, id);
     }
     
     @Patch(':adminId/aktif')
     @UseGuards(AuthGuard)
-    async aktifSuplier(@Param('adminId', ParseIntPipe) adminId: number, @Body() suplierId: NonAktifDto) {
-        return await this.adminService.aktifSuplier(adminId, suplierId);
+    async aktifSuplier(@Param('adminId', ParseIntPipe) adminId: number, @Body() suplierId: NonAktifDto, @Req() req
+    ) {
+    const {id} = req.user 
+        return await this.adminService.aktifSuplier(adminId, suplierId, id);
     }
 
     @Patch(':adminId/edit/password')
     @UseGuards(AuthGuard)
-    async editPassword(@Param('adminId', ParseIntPipe) adminId: number, @Body() data: EditPasswordDTO) {
-        return await this.adminService.editPassword(adminId, data);
+    async editPassword(@Param('adminId', ParseIntPipe) adminId: number, @Body() data: EditPasswordDTO, @Req() req
+    ) {
+    const {id} = req.user 
+        return await this.adminService.editPassword(adminId, data, id);
     }
     
     @Delete(':adminId/delete')
