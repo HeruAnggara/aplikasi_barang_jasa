@@ -11,20 +11,20 @@ datasource db {
 }
 
 model supplier {
-  id               Int      @id @default(autoincrement())
+  id               Int      
   nama_usaha       String
   email            String   @unique
   alamat           String   @db.Text
   no_npwp          String 
   password         String 
   status           Int      @default(1)
-  token            String?   @db.Text
+  token            String?  @db.Text
   created_at       DateTime @default(now())
   updated_at       DateTime @updatedAt() @db.Timestamp(6) 
 }
 
 model admin {
-  id               Int      @id @default(autoincrement())
+  id               Int      
   nama             String
   email            String   @unique
   alamat           String   @db.Text
@@ -36,10 +36,10 @@ model admin {
 }
 
 model pengadaan {
-  id               Int      @id @default(autoincrement())
+  id               Int      @id 
   nama_pengadaan   String   @db.VarChar(255)
   deskripsi        String   @db.Text
-  gambar           String   @db.Text
+  gambar           String?  @db.Text
   anggaran         String 
   status           Int      @default(1)
   created_at       DateTime @default(now())
@@ -47,21 +47,21 @@ model pengadaan {
 }
 
 model pengajuan {
-  id              Int       @id @default(autoincrement())
+  id              Int       @id 
   id_supplier     Int
   id_pengadaan    Int
-  anggaran        Decimal   
-  proposal        String    @db.Text
+  anggaran        Float     @db.Float()
+  proposal        String?   @db.Text
   status          Int       @default(1)
   created_at      DateTime  @default(now())
   updated_at      DateTime  @updatedAt() @db.Timestamp(6)
 }
 
 model laporan {
-  id            Int      @id @default(autoincrement())
+  id            Int      @id 
   id_pengajuan  Int
   id_supplier   Int
-  laporan       String   @db.Text
+  laporan       String?  @db.Text
   created_at    DateTime @default(now())
   updated_at    DateTime @updatedAt()
 }
