@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Delete, FileTypeValidator, Get, MaxFileSizeValidator, Param, ParseFilePipe, ParseIntPipe, Patch, Post, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, FileTypeValidator, Get, MaxFileSizeValidator, Param, ParseFilePipe, ParseIntPipe, Patch, Post, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { PengajuanService } from './pengajuan.service';
 import { AuthGuard } from 'src/admin/admin.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -12,19 +12,25 @@ export class PengajuanController {
 
     @Get(':supplierId/riwayat')
     @UseGuards(AuthGuard)
-    async riwayatPengajuan(@Param('supplierId', ParseIntPipe)supplierId: number, ){
-      return await this.pengajuan.riwayatPengajuan(supplierId)
+    async riwayatPengajuan(@Param('supplierId', ParseIntPipe)supplierId: number, @Req() req
+    ) {
+    const {id} = req.user
+      return await this.pengajuan.riwayatPengajuan(supplierId, id)
     }
     @Get(':supplierId/riwayat/selesai')
     @UseGuards(AuthGuard)
-    async riwayatPengajuanSelesai(@Param('supplierId', ParseIntPipe)supplierId: number, ){
-      return await this.pengajuan.riwayatPengajuanSelesai(supplierId)
+    async riwayatPengajuanSelesai(@Param('supplierId', ParseIntPipe)supplierId: number,@Req() req
+    ) {
+    const {id} = req.user
+      return await this.pengajuan.riwayatPengajuanSelesai(supplierId, id)
     }
     
     @Get(':adminId/laporan_pengajuan')
     @UseGuards(AuthGuard)
-    async pengajuanMasuk(@Param('adminId', ParseIntPipe)adminId: number, ){
-      return await this.pengajuan.pengajuanMasuk(adminId)
+    async pengajuanMasuk(@Param('adminId', ParseIntPipe)adminId: number, @Req() req
+    ) {
+    const {id} = req.user
+      return await this.pengajuan.pengajuanMasuk(adminId, id)
     }
 
     @Post(':supplierId')
@@ -47,10 +53,12 @@ export class PengajuanController {
           new MaxFileSizeValidator({ maxSize: 2000000 }),
           new FileTypeValidator({ fileType: 'application/pdf' }),
         ],
-      })) file: Express.Multer.File
-      ) {
+      })) file: Express.Multer.File,
+      @Req() req
+    ) {
+      const {id} = req.user;
       data.proposal = '/uploads/proposal/' + file.filename;
-      return await this.pengajuan.tambahPengajuan(supplierId, data);
+      return await this.pengajuan.tambahPengajuan(supplierId, data, id);
     }
     
     @Post(':supplierId/laporan')
@@ -73,36 +81,46 @@ export class PengajuanController {
           new MaxFileSizeValidator({ maxSize: 2000000 }),
           new FileTypeValidator({ fileType: 'application/pdf' }),
         ],
-      })) file: Express.Multer.File
-      ) {
+      })) file: Express.Multer.File,
+      @Req() req
+    ) {
+      const {id} = req.user
       data.laporan = '/uploads/laporan/' + file.filename;
-      return await this.pengajuan.tambahLaporan(supplierId, data);
+      return await this.pengajuan.tambahLaporan(supplierId, data, id);
     }
 
     @Patch(':adminId/:idPengajuan/terima')
     @UseGuards(AuthGuard)
-    async terimaPengajuan(@Param('adminId', ParseIntPipe)adminId: number, @Param('idPengajuan', ParseIntPipe)idPengajuan: number){
-      return await this.pengajuan.terimaPengajuan(adminId, idPengajuan)
+    async terimaPengajuan(@Param('adminId', ParseIntPipe)adminId: number, @Param('idPengajuan', ParseIntPipe)idPengajuan: number, @Req() req
+    ) {
+      const {id} = req.user
+      return await this.pengajuan.terimaPengajuan(adminId, idPengajuan, id)
     }
 
     @Patch(':adminId/:idPengajuan/tolak')
     @UseGuards(AuthGuard)
-    async tolakPengajuan(@Param('adminId', ParseIntPipe)adminId: number, @Param('idPengajuan', ParseIntPipe)idPengajuan: number){
-      return await this.pengajuan.tolakPengajuan(adminId, idPengajuan)
+    async tolakPengajuan(@Param('adminId', ParseIntPipe)adminId: number, @Param('idPengajuan', ParseIntPipe)idPengajuan: number, @Req() req
+    ) {
+      const {id} = req.user
+      return await this.pengajuan.tolakPengajuan(adminId, idPengajuan, id)
     }
     
     @Patch(':adminId/:idPengajuan/selesai')
     @UseGuards(AuthGuard)
-    async selesaiPengajuan(@Param('adminId', ParseIntPipe)adminId: number, @Param('idPengajuan', ParseIntPipe)idPengajuan: number){
-      return await this.pengajuan.selesaiPengajuan(adminId, idPengajuan)
+    async selesaiPengajuan(@Param('adminId', ParseIntPipe)adminId: number, @Param('idPengajuan', ParseIntPipe)idPengajuan: number, @Req() req
+    ) {
+      const {id} = req.user
+      return await this.pengajuan.selesaiPengajuan(adminId, idPengajuan, id)
     }
 
     @Delete(':adminId/:idLaporan/laporan')
     @UseGuards(AuthGuard)
     async tolakLaporan(
       @Param('adminId', ParseIntPipe) adminId: number,
-      @Param('idLaporan', ParseIntPipe) idLaporan: number
-      ) {
-        return await this.pengajuan.tolakLaporan(adminId, idLaporan);
+      @Param('idLaporan', ParseIntPipe) idLaporan: number,
+      @Req() req
+    ) {
+        const {id} = req.user
+        return await this.pengajuan.tolakLaporan(adminId, idLaporan, id);
     }
 }

@@ -16,7 +16,7 @@ export class PengajuanService {
      * @param file 
      * @returns 
      */
-    async tambahPengajuan(supplierId: number, data: PengajuannDto) {
+    async tambahPengajuan(supplierId: number, data: PengajuannDto, id: number) {
         try {
             const supplier = await this.prisma.supplier.findFirst({
                 where:{
@@ -24,7 +24,7 @@ export class PengajuanService {
                 }
             })
 
-            if(!supplier) {
+            if(supplier.id !== id) {
                 throw new HttpException('Bad Request', HttpStatus.NOT_FOUND);
             }
 
@@ -61,7 +61,7 @@ export class PengajuanService {
      * @param data
      * @returns 
      */
-    async terimaPengajuan(adminId: number, idPengajuan: number) {
+    async terimaPengajuan(adminId: number, idPengajuan: number, id: number) {
         try {
             const checkUser = await this.prisma.admin.findUnique({
                 where: {
@@ -69,8 +69,8 @@ export class PengajuanService {
                 }
             });
 
-            if(!checkUser) {
-                throw new HttpException('Bad Request', HttpStatus.NOT_FOUND)
+            if(checkUser.id !== id) {
+                throw new HttpException('Bad Request', HttpStatus.NOT_FOUND);
             }
 
             await this.prisma.pengajuan.update({
@@ -104,7 +104,7 @@ export class PengajuanService {
      * @param idPengajuan 
      * @returns 
      */
-    async tolakPengajuan(adminId: number, idPengajuan: number) {
+    async tolakPengajuan(adminId: number, idPengajuan: number, id: number) {
         try {
             const checkUser = await this.prisma.admin.findUnique({
                 where: {
@@ -112,8 +112,8 @@ export class PengajuanService {
                 }
             });
 
-            if(!checkUser) {
-                throw new HttpException('Bad Request', HttpStatus.NOT_FOUND)
+            if(checkUser.id !== id) {
+                throw new HttpException('Bad Request', HttpStatus.NOT_FOUND);
             }
 
             await this.prisma.pengajuan.update({
@@ -147,7 +147,7 @@ export class PengajuanService {
      * @param idPengajuan 
      * @returns 
      */
-    async selesaiPengajuan(adminId: number, idPengajuan: number) {
+    async selesaiPengajuan(adminId: number, idPengajuan: number, id: number) {
         try {
             const checkUser = await this.prisma.admin.findUnique({
                 where: {
@@ -155,8 +155,8 @@ export class PengajuanService {
                 }
             });
 
-            if(!checkUser) {
-                throw new HttpException('Bad Request', HttpStatus.NOT_FOUND)
+            if(checkUser.id !== id) {
+                throw new HttpException('Bad Request', HttpStatus.NOT_FOUND);
             }
 
             await this.prisma.pengajuan.update({
@@ -189,7 +189,7 @@ export class PengajuanService {
      * @param supplierId 
      * @returns 
      */
-    async riwayatPengajuan(supplierId: number) {
+    async riwayatPengajuan(supplierId: number, id: number) {
         try {
             const checkUser = await this.prisma.supplier.findUnique({
                 where: {
@@ -197,8 +197,8 @@ export class PengajuanService {
                 }
             });
 
-            if(!checkUser) {
-                throw new HttpException('Bad Request', HttpStatus.NOT_FOUND)
+            if(checkUser.id !== id) {
+                throw new HttpException('Bad Request', HttpStatus.NOT_FOUND);
             }
 
             const riwayat = [];
@@ -262,7 +262,7 @@ export class PengajuanService {
      * @param data 
      * @returns 
      */
-    async tambahLaporan(supplierId: number, data: LaporanDto) {
+    async tambahLaporan(supplierId: number, data: LaporanDto, id: number) {
         try {
             const supplier = await this.prisma.supplier.findFirst({
                 where:{
@@ -270,7 +270,7 @@ export class PengajuanService {
                 }
             })
 
-            if(!supplier) {
+            if(supplier.id !== id) {
                 throw new HttpException('Bad Request', HttpStatus.NOT_FOUND);
             }
 
@@ -304,7 +304,7 @@ export class PengajuanService {
      * @param adminId 
      * @returns 
      */
-    async pengajuanMasuk(adminId: number) {
+    async pengajuanMasuk(adminId: number, id: number) {
         try {
             const checkUser = await this.prisma.admin.findUnique({
                 where: {
@@ -312,9 +312,9 @@ export class PengajuanService {
                 }
             });
 
-            if(!checkUser) {
-                throw new HttpException('Bad Request', HttpStatus.NOT_FOUND)
-            }
+            if(checkUser.id !== id) {
+                throw new HttpException('Bad Request', HttpStatus.NOT_FOUND);
+              }
 
             const data = [];
             const pengajuan = await this.prisma.pengajuan.findMany({
@@ -383,7 +383,7 @@ export class PengajuanService {
      * @param supplierId 
      * @returns 
      */
-    async riwayatPengajuanSelesai(supplierId: number) {
+    async riwayatPengajuanSelesai(supplierId: number, id: number) {
         try {
             const checkUser = await this.prisma.supplier.findUnique({
                 where: {
@@ -391,9 +391,9 @@ export class PengajuanService {
                 }
             });
 
-            if(!checkUser) {
-                throw new HttpException('Bad Request', HttpStatus.NOT_FOUND)
-            }
+            if(checkUser.id !== id) {
+                throw new HttpException('Bad Request', HttpStatus.NOT_FOUND);
+              }
 
             const riwayat = [];
             const pengajuan = await this.prisma.pengajuan.findMany({
@@ -457,7 +457,7 @@ export class PengajuanService {
      * @param idLaporan 
      * @returns 
      */
-    async tolakLaporan(adminId: number, idLaporan: number) {
+    async tolakLaporan(adminId: number, idLaporan: number, id: number) {
         try {
             const checkUser = await this.prisma.admin.findFirst({
                 where: {
@@ -471,9 +471,9 @@ export class PengajuanService {
                 },
             });
 
-            if(!checkUser && !laporan) {
+            if(checkUser.id !== id && !laporan) {
                 throw new HttpException('Bad Request', HttpStatus.NOT_FOUND);
-            }
+              }
 
             const filePath = `public${laporan.laporan}`;
         
