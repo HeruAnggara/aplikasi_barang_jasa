@@ -5,6 +5,7 @@ import { PengadaanDto } from './dto/pengadaan.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { UpdatePengadaanDto } from './dto/updatePengadaan.dto';
+import { extname } from 'path';
 
 @Controller('pengadaan')
 export class PengadaanController {
@@ -26,9 +27,25 @@ export class PengadaanController {
           storage: diskStorage({
             destination: 'public/uploads/image',
             filename: (req, file, cb) => {
-              cb(null, file.originalname);
+              const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+              cb(null, uniqueSuffix + extname(file.originalname));
             },
           }),
+          fileFilter: (req, file, cb) => {
+            const allowedExtensions = ['.jpeg', '.png', '.jpg'];
+            const maxSize = 2 * 1024 * 1024; // 2MB
+
+            const fileExtension = extname(file.originalname).toLowerCase();
+            if (!allowedExtensions.includes(fileExtension)) {
+              return cb(new Error('Only JPEG, PNG, or JPG files are allowed'), false);
+            }
+
+            if (file.size > maxSize) {
+              return cb(new Error('File size cannot exceed 2 MB'), false);
+            }
+
+            cb(null, true);
+          }
         }),
       )
     async tambahPengadaan(
@@ -43,7 +60,7 @@ export class PengadaanController {
       @Req() req
         ) {
         const {id} = req.user 
-        data.gambar = '/uploads/image/' + file.filename;
+        data.gambar = file.filename;
         return await this.pengadaanService.tambahPengadaan(adminId, data, id);
     }
 
@@ -65,9 +82,25 @@ export class PengadaanController {
           storage: diskStorage({
             destination: 'public/uploads/image',
             filename: (req, file, cb) => {
-              cb(null, file.originalname);
+              const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+              cb(null, uniqueSuffix + extname(file.originalname));
             },
           }),
+          fileFilter: (req, file, cb) => {
+            const allowedExtensions = ['.jpeg', '.png', '.jpg'];
+            const maxSize = 2 * 1024 * 1024; // 2MB
+
+            const fileExtension = extname(file.originalname).toLowerCase();
+            if (!allowedExtensions.includes(fileExtension)) {
+              return cb(new Error('Only JPEG, PNG, or JPG files are allowed'), false);
+            }
+
+            if (file.size > maxSize) {
+              return cb(new Error('File size cannot exceed 2 MB'), false);
+            }
+            
+            cb(null, true);
+          }
         }),
       )
     async updateGambar(
@@ -82,7 +115,7 @@ export class PengadaanController {
       @Req() req
       ) {
       const {id} = req.user 
-        return await this.pengadaanService.updateFileGambar(adminId, idPengadaan, '/uploads/image/' + file.filename, id);
+        return await this.pengadaanService.updateFileGambar(adminId, idPengadaan, file.filename, id);
     }
 
     @Delete(':adminId/:idPengadaan')

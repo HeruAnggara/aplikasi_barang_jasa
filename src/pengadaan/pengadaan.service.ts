@@ -118,8 +118,8 @@ export class PengadaanService {
                 throw new HttpException('Bad Request', HttpStatus.NOT_FOUND);
               }
 
-            // const filePath = `public/uploads/image/${fileName}`;
-            const filePath = `public${pengadaan.gambar}`;
+            const filePath = `public/uploads/image/${pengadaan.gambar}`;
+            // const filePath = `public${pengadaan.gambar}`;
         
             await fs.promises.unlink(filePath);
             await this.prisma.pengadaan.update({
@@ -169,6 +169,10 @@ export class PengadaanService {
                 throw new HttpException('Bad Request', HttpStatus.NOT_FOUND);
               }
         
+            const filePath = `public/uploads/image/${pengadaan.gambar}`;
+        
+            await fs.promises.unlink(filePath);  
+            
             await this.prisma.pengadaan.update({
                 where: {
                     id: idPengadaan
