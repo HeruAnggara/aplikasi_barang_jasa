@@ -4,7 +4,6 @@ import { PengadaanService } from './pengadaan.service';
 import { PengadaanDto } from './dto/pengadaan.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
-import { UpdateGambarDto } from './dto/updateGambar.dto';
 import { UpdatePengadaanDto } from './dto/updatePengadaan.dto';
 
 @Controller('pengadaan')
@@ -75,11 +74,9 @@ export class PengadaanController {
           new MaxFileSizeValidator({ maxSize: 2000000 }),
           new FileTypeValidator({ fileType: /image\/(jpeg|png|jpg)/ }),
         ],
-      })) file: Express.Multer.File){
-        const data: UpdateGambarDto = {
-          gambar: '/uploads/image/' + file.filename, // Mengambil nama file gambar dari file yang diunggah
-        };
-        return await this.pengadaanService.updateFileGambar(adminId, idPengadaan, data);
+      })) file: Express.Multer.File)
+    {
+        return await this.pengadaanService.updateFileGambar(adminId, idPengadaan, '/uploads/image/' + file.filename);
     }
 
     @Delete(':adminId/:idPengadaan')

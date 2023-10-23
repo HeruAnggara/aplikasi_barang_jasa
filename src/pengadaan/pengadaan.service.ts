@@ -2,7 +2,6 @@ import {  HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { PengadaanDto } from './dto/pengadaan.dto';
 import * as fs from 'fs';
-import { UpdateGambarDto } from './dto/updateGambar.dto';
 import { UpdatePengadaanDto } from './dto/updatePengadaan.dto';
 import { Prisma } from '@prisma/client';
 
@@ -153,7 +152,7 @@ export class PengadaanService {
      * @param idPengadaan 
      * @request gambar
      */
-    async updateFileGambar(adminId: number, idPengadaan: number, data: UpdateGambarDto){
+    async updateFileGambar(adminId: number, idPengadaan: number, gambar){
         try {
             const checkUser = await this.prisma.admin.findFirst({
                 where: {
@@ -176,7 +175,7 @@ export class PengadaanService {
                     id: idPengadaan
                 },
                 data: {
-                    gambar: data.gambar
+                    gambar: gambar
                   },
             })
 
