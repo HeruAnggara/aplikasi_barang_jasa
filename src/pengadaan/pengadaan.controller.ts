@@ -39,19 +39,23 @@ export class PengadaanController {
           new MaxFileSizeValidator({ maxSize: 2000000 }),
           new FileTypeValidator({ fileType: /image\/(jpeg|png|jpg)/ }),
         ],
-      })) file: Express.Multer.File
-      ){
+      })) file: Express.Multer.File,
+      @Req() req
+        ) {
+        const {id} = req.user 
         data.gambar = '/uploads/image/' + file.filename;
-        return await this.pengadaanService.tambahPengadaan(adminId, data);
+        return await this.pengadaanService.tambahPengadaan(adminId, data, id);
     }
 
     @Delete(':adminId/:idPengadaan/gambar')
     @UseGuards(AuthGuard)
     async deleteFile(
       @Param('adminId', ParseIntPipe) adminId: number,
-      @Param('idPengadaan', ParseIntPipe) idPengadaan: number
-      ) {
-        return await this.pengadaanService.deleteUploadedFile(adminId, idPengadaan);
+      @Param('idPengadaan', ParseIntPipe) idPengadaan: number,
+      @Req() req
+        ) {
+        const {id} = req.user 
+        return await this.pengadaanService.deleteUploadedFile(adminId, idPengadaan, id);
     }
 
     @Patch(':adminId/update/:idPengadaan/gambar')
@@ -74,18 +78,22 @@ export class PengadaanController {
           new MaxFileSizeValidator({ maxSize: 2000000 }),
           new FileTypeValidator({ fileType: /image\/(jpeg|png|jpg)/ }),
         ],
-      })) file: Express.Multer.File)
-    {
-        return await this.pengadaanService.updateFileGambar(adminId, idPengadaan, '/uploads/image/' + file.filename);
+      })) file: Express.Multer.File,
+      @Req() req
+      ) {
+      const {id} = req.user 
+        return await this.pengadaanService.updateFileGambar(adminId, idPengadaan, '/uploads/image/' + file.filename, id);
     }
 
     @Delete(':adminId/:idPengadaan')
     @UseGuards(AuthGuard)
     async deletePengadaan(
       @Param('adminId', ParseIntPipe) adminId: number, 
-      @Param('idPengadaan', ParseIntPipe) idPengadaan: number
-      ) {
-        return await this.pengadaanService.deletePengadaan(adminId, idPengadaan);
+      @Param('idPengadaan', ParseIntPipe) idPengadaan: number,
+      @Req() req
+        ) {
+        const {id} = req.user 
+        return await this.pengadaanService.deletePengadaan(adminId, idPengadaan, id);
     }
 
     @Patch(':adminId/update/:idPengadaan')
@@ -93,9 +101,11 @@ export class PengadaanController {
     async updatePengadaan(
       @Param('adminId', ParseIntPipe) adminId: number,
       @Param('idPengadaan', ParseIntPipe) idPengadaan: number,
-      @Body() data: UpdatePengadaanDto
+      @Body() data: UpdatePengadaanDto,
+      @Req() req
     ) {
-      return await this.pengadaanService.updateDataPengadaan(adminId, idPengadaan, data);
+      const {id} = req.user 
+      return await this.pengadaanService.updateDataPengadaan(adminId, idPengadaan, data, id);
     }
 
     @Get('/aktif')

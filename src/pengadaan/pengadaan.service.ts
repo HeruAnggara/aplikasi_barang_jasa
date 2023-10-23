@@ -60,33 +60,32 @@ export class PengadaanService {
      * @param adminId 
      * @param idPengadaan 
      */
-    async tambahPengadaan(adminId: number, data: PengadaanDto){
+    async tambahPengadaan(adminId: number, data: PengadaanDto, id: number){
         try {
-              const checkUser = await this.prisma.admin.findFirst({
-                where: {
-                    id: adminId
+            const checkUser = await this.prisma.admin.findFirst({
+            where: {
+                id: adminId
+            }
+            })
+
+            if(checkUser.id !== id) {
+            throw new HttpException('Bad Request', HttpStatus.NOT_FOUND);
+            }
+
+            const tambahData = await this.prisma.pengadaan.create({
+                data: {
+                    nama_pengadaan: data.nama_pengadaan,
+                    deskripsi: data.deskripsi,
+                    anggaran: data.anggaran,
+                    gambar: data.gambar
                 }
-              })
+            })
 
-              if(checkUser){
-                const tambahData = await this.prisma.pengadaan.create({
-                    data: {
-                        nama_pengadaan: data.nama_pengadaan,
-                        deskripsi: data.deskripsi,
-                        anggaran: data.anggaran,
-                        gambar: data.gambar
-                    }
-                  })
-
-                  return {
-                    statusCode: HttpStatus.OK,
-                    message: "Tambah Data Pengadaan",
-                    data: tambahData
-                  }
-              }
-              
-              throw new HttpException('Bad Request', HttpStatus.NOT_FOUND);
-              
+            return {
+                statusCode: HttpStatus.OK,
+                message: "Tambah Data Pengadaan",
+                data: tambahData
+            }
 
         } catch (error) {
             return {
@@ -101,7 +100,7 @@ export class PengadaanService {
      * 
      * @param filePath 
      */
-    async deleteUploadedFile(adminId: number, idPengadaan: number) {
+    async deleteUploadedFile(adminId: number, idPengadaan: number, id: number) {
         try {
             const checkUser = await this.prisma.admin.findFirst({
                 where: {
@@ -115,9 +114,9 @@ export class PengadaanService {
                 },
             });
 
-            if(!checkUser && !pengadaan) {
+            if(checkUser.id !== id && !pengadaan) {
                 throw new HttpException('Bad Request', HttpStatus.NOT_FOUND);
-            }
+              }
 
             // const filePath = `public/uploads/image/${fileName}`;
             const filePath = `public${pengadaan.gambar}`;
@@ -152,7 +151,7 @@ export class PengadaanService {
      * @param idPengadaan 
      * @request gambar
      */
-    async updateFileGambar(adminId: number, idPengadaan: number, gambar){
+    async updateFileGambar(adminId: number, idPengadaan: number, gambar, id: number){
         try {
             const checkUser = await this.prisma.admin.findFirst({
                 where: {
@@ -166,9 +165,9 @@ export class PengadaanService {
                 },
             });
 
-            if(!checkUser && !pengadaan) {
+            if(checkUser.id !== id) {
                 throw new HttpException('Bad Request', HttpStatus.NOT_FOUND);
-            }
+              }
         
             await this.prisma.pengadaan.update({
                 where: {
@@ -199,7 +198,7 @@ export class PengadaanService {
      * @param idPengadaan 
      * @returns 
      */
-    async deletePengadaan(adminId: number, idPengadaan: number) {
+    async deletePengadaan(adminId: number, idPengadaan: number, id: number) {
         try {
             const checkUser = await this.prisma.admin.findFirst({
                 where: {
@@ -207,9 +206,9 @@ export class PengadaanService {
                 }
             })
 
-            if(!checkUser) {
+            if(checkUser.id !== id) {
                 throw new HttpException('Bad Request', HttpStatus.NOT_FOUND);
-            }
+              }
         
             await this.prisma.pengadaan.deleteMany({
                 where:{
@@ -238,7 +237,7 @@ export class PengadaanService {
      * @param data 
      * @returns 
      */
-    async updateDataPengadaan(adminId: number, idPengadaan: number, data: UpdatePengadaanDto){
+    async updateDataPengadaan(adminId: number, idPengadaan: number, data: UpdatePengadaanDto, id: number){
         try {
             const checkUser = await this.prisma.admin.findFirst({
                 where: {
@@ -252,9 +251,9 @@ export class PengadaanService {
                 },
             });
 
-            if(!checkUser && !pengadaan) {
+            if(checkUser.id !== id && !pengadaan) {
                 throw new HttpException('Bad Request', HttpStatus.NOT_FOUND);
-            }
+              }
         
             await this.prisma.pengadaan.updateMany({
                 where: {
