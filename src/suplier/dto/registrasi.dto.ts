@@ -11,23 +11,22 @@ import {
   export class RegisterDTO {
     
     @IsNotEmpty()
+    id: string;
+
+    @IsNotEmpty()
     @IsString()
     nama_usaha: string;
   
-    
     @IsNotEmpty()
     @IsEmail()
     email: string;
-  
-    
+
     @IsNotEmpty()
     alamat: string;
   
-    
     @IsNotEmpty()
     no_npwp: string;
   
-    
     @IsNotEmpty()
     @IsString()
     @MinLength(8)

@@ -3,6 +3,9 @@ import { IsNotEmpty, Matches, Max } from "class-validator";
 export class PengadaanDto {
   
   @IsNotEmpty()
+  id: string;
+  
+  @IsNotEmpty()
   nama_pengadaan: string;
   
   @IsNotEmpty()
