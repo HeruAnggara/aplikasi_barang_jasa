@@ -11,7 +11,7 @@ datasource db {
 }
 
 model supplier {
-  id               Int      
+  id               String   @id   
   nama_usaha       String
   email            String   @unique
   alamat           String   @db.Text
@@ -24,7 +24,7 @@ model supplier {
 }
 
 model admin {
-  id               Int      
+  id               String   @id   
   nama             String
   email            String   @unique
   alamat           String   @db.Text
@@ -36,7 +36,7 @@ model admin {
 }
 
 model pengadaan {
-  id               Int      @id 
+  id               String   @id 
   nama_pengadaan   String   @db.VarChar(255)
   deskripsi        String   @db.Text
   gambar           String?  @db.Text
@@ -47,7 +47,7 @@ model pengadaan {
 }
 
 model pengajuan {
-  id              Int       @id 
+  id              String    @id 
   id_supplier     Int
   id_pengadaan    Int
   anggaran        Float     @db.Float()
@@ -58,7 +58,7 @@ model pengajuan {
 }
 
 model laporan {
-  id            Int      @id 
+  id            String   @id 
   id_pengajuan  Int
   id_supplier   Int
   laporan       String?  @db.Text
