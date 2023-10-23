@@ -114,14 +114,14 @@ export class SuplierService {
      * @param data 
      * @returns 
      */
-    async editPassword(suplierId: number, data: EditPasswordDTO){
+    async editPassword(suplierId: number, data: EditPasswordDTO, id: number){
       try {
         const checkUserExists = await this.prisma.supplier.findFirst({
           where: {
               id: suplierId,
           },
       });
-      if (!checkUserExists) {
+      if (checkUserExists.id !== id) {
           throw new HttpException('Pengguna tidak ditemukan', HttpStatus.NOT_FOUND);
       }
 
