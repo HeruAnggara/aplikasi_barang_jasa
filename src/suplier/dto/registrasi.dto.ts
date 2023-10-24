@@ -10,7 +10,6 @@ import {
   
   export class RegisterDTO {
     
-    @IsNotEmpty()
     id: string;
 
     @IsNotEmpty()

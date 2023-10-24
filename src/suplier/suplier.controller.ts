@@ -28,7 +28,7 @@ export class SuplierController {
 
     @Patch(':suplierId/edit/password')
     @UseGuards(AuthGuard)
-    async editPassword(@Param('suplierId', ParseIntPipe) suplierId: number, @Body() data: EditPasswordDTO, @Req() req) {
+    async editPassword(@Param('suplierId') suplierId: string, @Body() data: EditPasswordDTO, @Req() req) {
         const {id} = req.user  
         return await this.suplierService.editPassword(suplierId, data, id);
     }

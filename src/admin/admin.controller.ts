@@ -14,7 +14,7 @@ export class AdminController {
     @Get(':adminId/list/admin')
     @UseGuards(AuthGuard)
     async listAdmin(
-        @Param('adminId', ParseIntPipe) adminId: number,
+        @Param('adminId') adminId: string,
         @Query('keyword') keyword: any,
         @Query('page') page: number,
         @Query('limit') limit: number,
@@ -27,7 +27,7 @@ export class AdminController {
     @Get(':adminId/list/suplier')
     @UseGuards(AuthGuard)
     async listSuplier(
-        @Param('adminId', ParseIntPipe) adminId: number,
+        @Param('adminId') adminId: string,
         @Query('keyword') keyword: any,
         @Query('page') page: number,
         @Query('limit') limit: number,
@@ -52,7 +52,7 @@ export class AdminController {
     @UsePipes(ValidationPipe)
     @Put(':adminId/edit')
     @UseGuards(AuthGuard)
-    async editDataAdmin(@Param('adminId', ParseIntPipe) adminId: number, @Body() newData: EditDto, @Req() req
+    async editDataAdmin(@Param('adminId') adminId: string, @Body() newData: EditDto, @Req() req
     ) {
     const {id} = req.user        
         return this.adminService.editDataAdmin(adminId, newData, id);
@@ -60,7 +60,7 @@ export class AdminController {
 
     @Patch(':adminId/nonaktif')
     @UseGuards(AuthGuard)
-    async nonAktifSuplier(@Param('adminId', ParseIntPipe) adminId: number, @Body() suplierId: NonAktifDto, @Req() req
+    async nonAktifSuplier(@Param('adminId') adminId: string, @Body() suplierId: NonAktifDto, @Req() req
     ) {
     const {id} = req.user 
         return await this.adminService.nonAktifSuplier(adminId, suplierId, id);
@@ -68,7 +68,7 @@ export class AdminController {
     
     @Patch(':adminId/aktif')
     @UseGuards(AuthGuard)
-    async aktifSuplier(@Param('adminId', ParseIntPipe) adminId: number, @Body() suplierId: NonAktifDto, @Req() req
+    async aktifSuplier(@Param('adminId') adminId: string, @Body() suplierId: NonAktifDto, @Req() req
     ) {
     const {id} = req.user 
         return await this.adminService.aktifSuplier(adminId, suplierId, id);
@@ -76,7 +76,7 @@ export class AdminController {
 
     @Patch(':adminId/edit/password')
     @UseGuards(AuthGuard)
-    async editPassword(@Param('adminId', ParseIntPipe) adminId: number, @Body() data: EditPasswordDTO, @Req() req
+    async editPassword(@Param('adminId') adminId: string, @Body() data: EditPasswordDTO, @Req() req
     ) {
     const {id} = req.user 
         return await this.adminService.editPassword(adminId, data, id);
@@ -84,7 +84,7 @@ export class AdminController {
     
     @Delete(':adminId/delete')
     @UseGuards(AuthGuard)
-    async hapusAdmin(@Param('adminId', ParseIntPipe) adminId: number) {        
+    async hapusAdmin(@Param('adminId') adminId: string) {        
         return this.adminService.hapusAdmin(adminId);
     }
 }

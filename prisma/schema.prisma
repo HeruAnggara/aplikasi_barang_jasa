@@ -48,8 +48,8 @@ model pengadaan {
 
 model pengajuan {
   id              String    @id 
-  id_supplier     Int
-  id_pengadaan    Int
+  id_supplier     String
+  id_pengadaan    String
   anggaran        Float     @db.Float()
   proposal        String?   @db.Text
   status          Int       @default(1)
@@ -59,8 +59,8 @@ model pengajuan {
 
 model laporan {
   id            String   @id 
-  id_pengajuan  Int
-  id_supplier   Int
+  id_pengajuan  String
+  id_supplier   String
   laporan       String?  @db.Text
   created_at    DateTime @default(now())
   updated_at    DateTime @updatedAt()

@@ -49,7 +49,7 @@ export class PengadaanController {
         }),
       )
     async tambahPengadaan(
-      @Param('adminId', ParseIntPipe) adminId: number, 
+      @Param('adminId') adminId: string, 
       @Body() data: PengadaanDto, 
       @UploadedFile(new ParseFilePipe({
         validators: [
@@ -67,8 +67,8 @@ export class PengadaanController {
     @Delete(':adminId/:idPengadaan/gambar')
     @UseGuards(AuthGuard)
     async deleteFile(
-      @Param('adminId', ParseIntPipe) adminId: number,
-      @Param('idPengadaan', ParseIntPipe) idPengadaan: number,
+      @Param('adminId') adminId: string,
+      @Param('idPengadaan') idPengadaan: string,
       @Req() req
         ) {
         const {id} = req.user 
@@ -104,8 +104,8 @@ export class PengadaanController {
         }),
       )
     async updateGambar(
-      @Param('adminId', ParseIntPipe) adminId: number, 
-      @Param('idPengadaan', ParseIntPipe) idPengadaan: number,
+      @Param('adminId') adminId: string, 
+      @Param('idPengadaan') idPengadaan: string,
       @UploadedFile(new ParseFilePipe({
         validators: [
           new MaxFileSizeValidator({ maxSize: 2000000 }),
@@ -121,8 +121,8 @@ export class PengadaanController {
     @Delete(':adminId/:idPengadaan')
     @UseGuards(AuthGuard)
     async deletePengadaan(
-      @Param('adminId', ParseIntPipe) adminId: number, 
-      @Param('idPengadaan', ParseIntPipe) idPengadaan: number,
+      @Param('adminId') adminId: string, 
+      @Param('idPengadaan') idPengadaan: string,
       @Req() req
         ) {
         const {id} = req.user 
@@ -132,8 +132,8 @@ export class PengadaanController {
     @Patch(':adminId/update/:idPengadaan')
     @UseGuards(AuthGuard)
     async updatePengadaan(
-      @Param('adminId', ParseIntPipe) adminId: number,
-      @Param('idPengadaan', ParseIntPipe) idPengadaan: number,
+      @Param('adminId') adminId: string,
+      @Param('idPengadaan') idPengadaan: string,
       @Body() data: UpdatePengadaanDto,
       @Req() req
     ) {

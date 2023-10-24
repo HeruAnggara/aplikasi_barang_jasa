@@ -2,7 +2,6 @@ import { IsInt, IsNotEmpty, IsString, Matches, Max } from "class-validator";
 
 export class PengajuannDto {
   
-  @IsNotEmpty()
   id: string;
   
   @IsNotEmpty()
@@ -11,7 +10,6 @@ export class PengajuannDto {
   proposal: string;
 
   @IsNotEmpty()
-  @IsString()
   anggaran: string
 
 }

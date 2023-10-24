@@ -1,4 +1,5 @@
 import { HttpCode, HttpException, HttpStatus, Injectable, ParseIntPipe } from '@nestjs/common';
+import { v4 as uuidv4 } from 'uuid';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { PengajuannDto } from './dto/tambahPengajuan.dto';
 import { LaporanDto } from './dto/tambahLaporan.dto';
@@ -16,7 +17,7 @@ export class PengajuanService {
      * @param file 
      * @returns 
      */
-    async tambahPengajuan(supplierId: number, data: PengajuannDto, id: number) {
+    async tambahPengajuan(supplierId: string, data: PengajuannDto, id: string) {
         try {
             const supplier = await this.prisma.supplier.findFirst({
                 where:{
@@ -28,14 +29,13 @@ export class PengajuanService {
                 throw new HttpException('Bad Request', HttpStatus.NOT_FOUND);
             }
 
-            const idPengadaan = parseInt(data.id_pengadaan); 
-
             await this.prisma.pengajuan.create({
                 data: {
-                    id_pengadaan: idPengadaan,
+                    id: uuidv4(),
+                    id_pengadaan: data.id_pengadaan,
                     id_supplier: supplierId,
                     proposal: data.proposal,
-                    anggaran: data.anggaran
+                    anggaran: parseFloat(data.proposal)
                 }
             })
 
@@ -61,7 +61,7 @@ export class PengajuanService {
      * @param data
      * @returns 
      */
-    async terimaPengajuan(adminId: number, idPengajuan: number, id: number) {
+    async terimaPengajuan(adminId: string, idPengajuan: string, id: string) {
         try {
             const checkUser = await this.prisma.admin.findUnique({
                 where: {
@@ -104,7 +104,7 @@ export class PengajuanService {
      * @param idPengajuan 
      * @returns 
      */
-    async tolakPengajuan(adminId: number, idPengajuan: number, id: number) {
+    async tolakPengajuan(adminId: string, idPengajuan: string, id: string) {
         try {
             const checkUser = await this.prisma.admin.findUnique({
                 where: {
@@ -147,7 +147,7 @@ export class PengajuanService {
      * @param idPengajuan 
      * @returns 
      */
-    async selesaiPengajuan(adminId: number, idPengajuan: number, id: number) {
+    async selesaiPengajuan(adminId: string, idPengajuan: string, id: string) {
         try {
             const checkUser = await this.prisma.admin.findUnique({
                 where: {
@@ -189,7 +189,7 @@ export class PengajuanService {
      * @param supplierId 
      * @returns 
      */
-    async riwayatPengajuan(supplierId: number, id: number) {
+    async riwayatPengajuan(supplierId: string, id: string) {
         try {
             const checkUser = await this.prisma.supplier.findUnique({
                 where: {
@@ -262,7 +262,7 @@ export class PengajuanService {
      * @param data 
      * @returns 
      */
-    async tambahLaporan(supplierId: number, data: LaporanDto, id: number) {
+    async tambahLaporan(supplierId: string, data: LaporanDto, id: string) {
         try {
             const supplier = await this.prisma.supplier.findFirst({
                 where:{
@@ -274,11 +274,10 @@ export class PengajuanService {
                 throw new HttpException('Bad Request', HttpStatus.NOT_FOUND);
             }
 
-            const idPengajuan = parseInt(data.id_pengajuan); 
-
             await this.prisma.laporan.create({
                 data: {
-                    id_pengajuan: idPengajuan,
+                    id : uuidv4(),
+                    id_pengajuan: data.id_pengajuan,
                     id_supplier: supplierId,
                     laporan: data.laporan
                 }
@@ -304,7 +303,7 @@ export class PengajuanService {
      * @param adminId 
      * @returns 
      */
-    async pengajuanMasuk(adminId: number, id: number) {
+    async pengajuanMasuk(adminId: string, id: string) {
         try {
             const checkUser = await this.prisma.admin.findUnique({
                 where: {
@@ -383,7 +382,7 @@ export class PengajuanService {
      * @param supplierId 
      * @returns 
      */
-    async riwayatPengajuanSelesai(supplierId: number, id: number) {
+    async riwayatPengajuanSelesai(supplierId: string, id: string) {
         try {
             const checkUser = await this.prisma.supplier.findUnique({
                 where: {
@@ -457,7 +456,7 @@ export class PengajuanService {
      * @param idLaporan 
      * @returns 
      */
-    async tolakLaporan(adminId: number, idLaporan: number, id: number) {
+    async tolakLaporan(adminId: string, idLaporan: string, id: string) {
         try {
             const checkUser = await this.prisma.admin.findFirst({
                 where: {

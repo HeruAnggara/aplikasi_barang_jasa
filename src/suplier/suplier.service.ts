@@ -1,4 +1,5 @@
 import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { v4 as uuidv4 } from 'uuid';
 import { RegisterDTO } from './dto/registrasi.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { compare ,hash } from 'bcrypt';
@@ -29,7 +30,14 @@ export class SuplierService {
         }
         data.password = await hash(data.password, 12);
         const createUser = await this.prisma.supplier.create({
-            data
+            data: {
+              id: uuidv4(),
+              nama_usaha: data.nama_usaha,
+              email: data.email,
+              alamat: data.alamat,
+              no_npwp: data.no_npwp,
+              password: data.password
+            }
         })
 
         if (createUser) {
@@ -114,7 +122,7 @@ export class SuplierService {
      * @param data 
      * @returns 
      */
-    async editPassword(suplierId: number, data: EditPasswordDTO, id: number){
+    async editPassword(suplierId: string, data: EditPasswordDTO, id: string){
       try {
         const checkUserExists = await this.prisma.supplier.findFirst({
           where: {

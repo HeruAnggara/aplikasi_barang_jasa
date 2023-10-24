@@ -1,4 +1,5 @@
 import {  HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { v4 as uuidv4 } from 'uuid';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { PengadaanDto } from './dto/pengadaan.dto';
 import * as fs from 'fs';
@@ -60,7 +61,7 @@ export class PengadaanService {
      * @param adminId 
      * @param idPengadaan 
      */
-    async tambahPengadaan(adminId: number, data: PengadaanDto, id: number){
+    async tambahPengadaan(adminId: string, data: PengadaanDto, id: string){
         try {
             const checkUser = await this.prisma.admin.findFirst({
             where: {
@@ -74,6 +75,7 @@ export class PengadaanService {
 
             const tambahData = await this.prisma.pengadaan.create({
                 data: {
+                    id: uuidv4(),
                     nama_pengadaan: data.nama_pengadaan,
                     deskripsi: data.deskripsi,
                     anggaran: data.anggaran,
@@ -100,7 +102,7 @@ export class PengadaanService {
      * 
      * @param filePath 
      */
-    async deleteUploadedFile(adminId: number, idPengadaan: number, id: number) {
+    async deleteUploadedFile(adminId: string, idPengadaan: string, id: string) {
         try {
             const checkUser = await this.prisma.admin.findFirst({
                 where: {
@@ -151,7 +153,7 @@ export class PengadaanService {
      * @param idPengadaan 
      * @request gambar
      */
-    async updateFileGambar(adminId: number, idPengadaan: number, gambar, id: number){
+    async updateFileGambar(adminId: string, idPengadaan: string, gambar, id: string){
         try {
             const checkUser = await this.prisma.admin.findFirst({
                 where: {
@@ -202,7 +204,7 @@ export class PengadaanService {
      * @param idPengadaan 
      * @returns 
      */
-    async deletePengadaan(adminId: number, idPengadaan: number, id: number) {
+    async deletePengadaan(adminId: string, idPengadaan: string, id: string) {
         try {
             const checkUser = await this.prisma.admin.findFirst({
                 where: {
@@ -241,7 +243,7 @@ export class PengadaanService {
      * @param data 
      * @returns 
      */
-    async updateDataPengadaan(adminId: number, idPengadaan: number, data: UpdatePengadaanDto, id: number){
+    async updateDataPengadaan(adminId: string, idPengadaan: string, data: UpdatePengadaanDto, id: string){
         try {
             const checkUser = await this.prisma.admin.findFirst({
                 where: {

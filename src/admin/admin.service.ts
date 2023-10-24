@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { compare, hash } from 'bcrypt';
+import { v4 as uuidv4 } from 'uuid';
 import { LoginDto } from './dto/login.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
@@ -30,8 +31,15 @@ export class AdminService {
           throw new HttpException('Data tersebut sudah terdaftar', HttpStatus.FOUND);
       }
       data.password = await hash(data.password, 12);
+      data.id = uuidv4();
       const createUser = await this.prisma.admin.create({
-          data
+          data: {
+            id: uuidv4(),
+            nama: data.nama,
+            email: data.email,
+            password: data.password,
+            alamat: data.alamat
+          }
       })
 
       if (createUser) {
@@ -95,7 +103,7 @@ export class AdminService {
      * Edit Data Admin
      * @param data
      */
-    async editDataAdmin(adminId: number, newData: EditDto, id: number) {
+    async editDataAdmin(adminId: string, newData: EditDto, id: string) {
       const existingAdmin = await this.prisma.admin.findUnique({
         where: { id: adminId },
       });
@@ -120,7 +128,7 @@ export class AdminService {
      * Hapus Data Admin
      * @param data
      */
-    async hapusAdmin(adminId: number) {
+    async hapusAdmin(adminId: string) {
       try {
         const deleteAdmin = await this.prisma.admin.delete({
           where: {
@@ -145,7 +153,7 @@ export class AdminService {
      * @param adminId 
      * @returns 
      */
-    async listAdmin(adminId: number, keyword: any, page: number = 1, limit: number = 10, id: number) {
+    async listAdmin(adminId: string, keyword: any, page: number = 1, limit: number = 10, id: string) {
       try {
         const checkUser = await this.prisma.admin.findFirst({
           where: {
@@ -206,7 +214,7 @@ export class AdminService {
      * @param limit 
      * @returns 
      */
-    async listSuplier(adminId: number, keyword: any, page: number = 1, limit: number = 10, id: number) {
+    async listSuplier(adminId: string, keyword: any, page: number = 1, limit: number = 10, id: string) {
       try {
         const checkUser = await this.prisma.admin.findFirst({
           where: {
@@ -266,7 +274,7 @@ export class AdminService {
      * @param suplierId 
      * @returns 
      */
-    async nonAktifSuplier(adminId: number, data: NonAktifDto, id: number) {
+    async nonAktifSuplier(adminId: string, data: NonAktifDto, id: string) {
       try {
         const checkUser = await this.prisma.admin.findUnique({
           where: {
@@ -278,10 +286,9 @@ export class AdminService {
           throw new HttpException('Bad Request', HttpStatus.NOT_FOUND);
         }
 
-        const suplierId = parseInt(data.id)
         await this.prisma.supplier.update({
             where: {
-                id: suplierId
+                id: data.id
             },
             data: {
                 status:{
@@ -310,7 +317,7 @@ export class AdminService {
      * @param data 
      * @returns 
      */
-    async aktifSuplier(adminId: number, data: NonAktifDto, id: number) {
+    async aktifSuplier(adminId: string, data: NonAktifDto, id: string) {
       try {
         const checkUser = await this.prisma.admin.findUnique({
           where: {
@@ -322,10 +329,9 @@ export class AdminService {
           throw new HttpException('Bad Request', HttpStatus.NOT_FOUND);
         }
 
-        const suplierId = parseInt(data.id)
         await this.prisma.supplier.update({
             where: {
-                id: suplierId
+                id: data.id
             },
             data: {
                 status:{
@@ -354,7 +360,7 @@ export class AdminService {
      * @param data 
      * @returns 
      */
-    async editPassword(adminId: number, data: EditPasswordDTO, id: number){
+    async editPassword(adminId: string, data: EditPasswordDTO, id: string){
       try {
         const checkUserExists = await this.prisma.admin.findFirst({
           where: {

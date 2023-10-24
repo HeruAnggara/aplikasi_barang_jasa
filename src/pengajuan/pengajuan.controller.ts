@@ -13,14 +13,14 @@ export class PengajuanController {
 
     @Get(':supplierId/riwayat')
     @UseGuards(AuthGuard)
-    async riwayatPengajuan(@Param('supplierId', ParseIntPipe)supplierId: number, @Req() req
+    async riwayatPengajuan(@Param('supplierId')supplierId: string, @Req() req
     ) {
     const {id} = req.user
       return await this.pengajuan.riwayatPengajuan(supplierId, id)
     }
     @Get(':supplierId/riwayat/selesai')
     @UseGuards(AuthGuard)
-    async riwayatPengajuanSelesai(@Param('supplierId', ParseIntPipe)supplierId: number,@Req() req
+    async riwayatPengajuanSelesai(@Param('supplierId')supplierId: string,@Req() req
     ) {
     const {id} = req.user
       return await this.pengajuan.riwayatPengajuanSelesai(supplierId, id)
@@ -28,7 +28,7 @@ export class PengajuanController {
     
     @Get(':adminId/laporan_pengajuan')
     @UseGuards(AuthGuard)
-    async pengajuanMasuk(@Param('adminId', ParseIntPipe)adminId: number, @Req() req
+    async pengajuanMasuk(@Param('adminId')adminId: string, @Req() req
     ) {
     const {id} = req.user
       return await this.pengajuan.pengajuanMasuk(adminId, id)
@@ -57,7 +57,7 @@ export class PengajuanController {
         }),
       )
     async tambahPengajuan(
-      @Param('supplierId', ParseIntPipe) supplierId: number, 
+      @Param('supplierId') supplierId: string, 
       @Body() data: PengajuannDto, 
       @UploadedFile(new ParseFilePipe({
         validators: [
@@ -95,7 +95,7 @@ export class PengajuanController {
         }),
       )
     async tambahLaporan(
-      @Param('supplierId', ParseIntPipe) supplierId: number, 
+      @Param('supplierId') supplierId: string, 
       @Body() data: LaporanDto, 
       @UploadedFile(new ParseFilePipe({
         validators: [
@@ -112,7 +112,7 @@ export class PengajuanController {
 
     @Patch(':adminId/:idPengajuan/terima')
     @UseGuards(AuthGuard)
-    async terimaPengajuan(@Param('adminId', ParseIntPipe)adminId: number, @Param('idPengajuan', ParseIntPipe)idPengajuan: number, @Req() req
+    async terimaPengajuan(@Param('adminId')adminId: string, @Param('idPengajuan')idPengajuan: string, @Req() req
     ) {
       const {id} = req.user
       return await this.pengajuan.terimaPengajuan(adminId, idPengajuan, id)
@@ -120,7 +120,7 @@ export class PengajuanController {
 
     @Patch(':adminId/:idPengajuan/tolak')
     @UseGuards(AuthGuard)
-    async tolakPengajuan(@Param('adminId', ParseIntPipe)adminId: number, @Param('idPengajuan', ParseIntPipe)idPengajuan: number, @Req() req
+    async tolakPengajuan(@Param('adminId')adminId: string, @Param('idPengajuan')idPengajuan: string, @Req() req
     ) {
       const {id} = req.user
       return await this.pengajuan.tolakPengajuan(adminId, idPengajuan, id)
@@ -128,7 +128,7 @@ export class PengajuanController {
     
     @Patch(':adminId/:idPengajuan/selesai')
     @UseGuards(AuthGuard)
-    async selesaiPengajuan(@Param('adminId', ParseIntPipe)adminId: number, @Param('idPengajuan', ParseIntPipe)idPengajuan: number, @Req() req
+    async selesaiPengajuan(@Param('adminId')adminId: string, @Param('idPengajuan')idPengajuan: string, @Req() req
     ) {
       const {id} = req.user
       return await this.pengajuan.selesaiPengajuan(adminId, idPengajuan, id)
@@ -137,8 +137,8 @@ export class PengajuanController {
     @Delete(':adminId/:idLaporan/laporan')
     @UseGuards(AuthGuard)
     async tolakLaporan(
-      @Param('adminId', ParseIntPipe) adminId: number,
-      @Param('idLaporan', ParseIntPipe) idLaporan: number,
+      @Param('adminId') adminId: string,
+      @Param('idLaporan') idLaporan: string,
       @Req() req
     ) {
         const {id} = req.user
