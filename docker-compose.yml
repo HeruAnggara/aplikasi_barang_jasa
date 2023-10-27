@@ -1,0 +1,37 @@
+version: '1.0'
+
+services:
+  app:
+    image: node:18
+    working_dir: /var/www
+    depends_on:
+      - mysql
+    volumes:
+      - ./:/var/www
+    ports:
+      - 3000:3000
+    command: bash -c "npm install && npm uninstall bcrypt && npm i bcrypt && npx prisma generate && npx prisma migrate dev --name init && npm run build && npm run start:dev"
+    networks:
+      - bj
+
+  mysql:
+    image: mysql:latest
+    ports:
+      - $MYSQL_PORT:$MYSQL_PORT
+    volumes:
+      - 'mysql_data:/bitnami/mysql/data'    
+    env_file: ./.env
+    environment:
+      - MYSQL_ROOT_PASSWORD=$MYSQL_DOCKER_PASSWORD
+      - MYSQL_DATABASE=$MYSQL_DB
+    restart: always
+    networks:
+      - bj
+
+networks:
+  bj:
+    driver: bridge
+
+volumes:
+  mysql_data:
+    driver: local
